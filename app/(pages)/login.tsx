@@ -7,6 +7,7 @@ import Toast from 'react-native-toast-message';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '@/store/slices/userSlice';
 import { AppDispatch, RootState } from '@/store/store';
+import { postRequest } from '@/constants/api';  // Import postRequest from your API utilities
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -25,8 +26,8 @@ export default function LoginScreen() {
     }
   }, [user]);
 
-  // Form validation & login
-  const handleLogin = () => {
+  // Function to handle login API request
+  const handleLogin = async () => {
     if (!email || !password) {
       Toast.show({
         type: 'error',
@@ -36,9 +37,31 @@ export default function LoginScreen() {
       return;
     }
 
-    // Fake authentication (replace with API call)
-    dispatch(setUser({ name: email })); // Store user in Redux
-    router.replace('/menu'); // Navigate to menu
+    setLoading(true); // Show loading spinner
+
+
+    postRequest('/login', { email, password })
+      .then((response) => {
+        // Handle successful login
+        const { user } = response.data;
+
+        // Store user data and token in Redux
+        dispatch(setUser(user));
+
+        // Navigate to the menu screen
+        router.replace('/menu');
+      })
+      .catch((error) => {
+        console.error('Login failed', error);
+        Toast.show({
+          type: 'error',
+          text1: 'Login Failed',
+          text2: 'Invalid credentials, please try again.',
+        });
+      })
+      .finally(() => {
+        setLoading(false); // Hide loading spinner
+      });
   };
 
   if (loading) {
@@ -86,9 +109,6 @@ export default function LoginScreen() {
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push('/register')}>
-          <Text style={styles.registerText}>Don't have an account? Sign Up</Text>
-        </TouchableOpacity>
       </Animated.View>
 
       <Toast />

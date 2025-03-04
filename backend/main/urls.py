@@ -1,40 +1,13 @@
-from rest_framework import viewsets
-from .models import Crop, Farmer, FarmType, User
-from .serializers import (
-    CropGetSerializer, CropPostSerializer,
-    FarmerGetSerializer, FarmerPostSerializer,
-    FarmTypeGetSerializer, FarmTypePostSerializer,
-    UserGetSerializer, UserPostSerializer
-)
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import FarmTypeViewSet, CropViewSet, FarmerViewSet, UserViewSet
 
-class CropViewSet(viewsets.ModelViewSet):
-    queryset = Crop.objects.all()
+router = DefaultRouter()
+router.register(r'farm-types', FarmTypeViewSet)
+router.register(r'crops', CropViewSet)
+router.register(r'farmers', FarmerViewSet)
+router.register(r'users', UserViewSet)
 
-    def get_serializer_class(self):
-        if self.request.method == "GET":
-            return CropGetSerializer
-        return CropPostSerializer
-
-class FarmerViewSet(viewsets.ModelViewSet):
-    queryset = Farmer.objects.all()
-
-    def get_serializer_class(self):
-        if self.request.method == "GET":
-            return FarmerGetSerializer
-        return FarmerPostSerializer
-
-class FarmTypeViewSet(viewsets.ModelViewSet):
-    queryset = FarmType.objects.all()
-
-    def get_serializer_class(self):
-        if self.request.method == "GET":
-            return FarmTypeGetSerializer
-        return FarmTypePostSerializer
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-
-    def get_serializer_class(self):
-        if self.request.method == "GET":
-            return UserGetSerializer
-        return UserPostSerializer
+urlpatterns = [
+    path('api/', include(router.urls)),
+]
