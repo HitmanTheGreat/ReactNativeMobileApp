@@ -11,6 +11,8 @@ import { Divider } from 'react-native-paper';
 import UsersScreen from '../screens/users/UsersScreen';
 import UserDetailsScreen from '../screens/users/UserDetailsScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch } from 'react-redux';
+import { logout } from '@/store/slices/userSlice';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -20,20 +22,26 @@ const CustomDrawerContent = ({ navigation }: { navigation: any }) => {
 
 
     // Logout function
+    const dispatch = useDispatch();
+
     const handleLogout = async () => {
+        const dispatch = useDispatch();
+
         try {
-            await AsyncStorage.clear(); // Clears all stored data
+            // Clear AsyncStorage
+            await AsyncStorage.clear();
+
+            // Dispatch Redux logout action
+            dispatch(logout());
+
+            // Reset navigation to Login screen
             navigation.reset({
                 index: 0,
-                routes: [{ name: '/' }], // Redirects to login or home screen
+                routes: [{ name: 'Login' }], // Ensure 'Login' matches your route name
             });
+
         } catch (error) {
             console.error("Logout Error:", error);
-        } finally {
-            navigation.reset({
-                index: 0,
-                routes: [{ name: '/' }], // Redirects to login or home screen
-            });
         }
     };
 
@@ -57,7 +65,7 @@ const CustomDrawerContent = ({ navigation }: { navigation: any }) => {
             <Divider style={styles.divider} />
 
             <DrawerItem icon="tree" label="Farm Types" navigation={navigation} screen="FarmTypes" />
-            <DrawerItem icon="tractor" label="Farm" navigation={navigation} screen="Farm" />
+            <DrawerItem icon="user" label="Farmer" navigation={navigation} screen="Farmer" />
             <DrawerItem icon="seedling" label="Crops" navigation={navigation} screen="Crops" />
 
             <Divider style={styles.sectionDivider} />
@@ -100,7 +108,7 @@ const MainStack = ({ navigation }: { navigation: any }) => {
                 ),
             }}
         >
-            
+
             <Stack.Screen name="BottomTabs" component={BottomTabs} options={{ title: 'AgriConnect' }} />
 
         </Stack.Navigator>

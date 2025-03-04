@@ -1,16 +1,31 @@
-import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import Toast from 'react-native-toast-message';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '@/store';
+import { setUser } from '@/slices/userSlice';
 
 export default function LoginScreen() {
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((state: RootState) => state.user.user);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  // Form validation
+  // Check if user is already logged in
+  useEffect(() => {
+    if (user) {
+      router.replace('/menu'); // Redirect to menu if logged in
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
+
+  // Form validation & login
   const handleLogin = () => {
     if (!email || !password) {
       Toast.show({
@@ -21,19 +36,25 @@ export default function LoginScreen() {
       return;
     }
 
-    // Proceed with authentication (replace with actual login logic)
-    router.push('/menu')
+    // Fake authentication (replace with API call)
+    dispatch(setUser({ name: email })); // Store user in Redux
+    router.replace('/menu'); // Navigate to menu
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#FFD700" />
+      </View>
+    );
+  }
 
   return (
     <LinearGradient colors={["#74C369", "#2D732E"]} style={styles.container}>
-   
-
       <Animated.View entering={FadeInDown.duration(1200)} style={styles.card}>
-        
-      <Animated.View entering={FadeInUp.duration(1000)}>
-        <Image source={require('@/assets/images/farm-logo.png')} style={styles.logo} />
-      </Animated.View>
+        <Animated.View entering={FadeInUp.duration(1000)}>
+          <Image source={require('@/assets/images/farm-logo.png')} style={styles.logo} />
+        </Animated.View>
 
         <Text style={styles.title}>Welcome Back</Text>
         <Text style={styles.subtitle}>Sign in to continue</Text>
@@ -82,6 +103,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#74C369',
+  },
   logo: {
     width: 120,
     height: 120,
@@ -94,8 +121,8 @@ const styles = StyleSheet.create({
     padding: 25,
     borderRadius: 15,
     alignItems: 'center',
-    elevation: 5, // Shadow for Android
-    shadowColor: '#000', // Shadow for iOS
+    elevation: 5,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
