@@ -13,7 +13,7 @@ export default function LoginScreen() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.user.user);
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -28,7 +28,7 @@ export default function LoginScreen() {
 
   // Function to handle login API request
   const handleLogin = async () => {
-    if (!email || !password) {
+    if (!username || !password) {
       Toast.show({
         type: 'error',
         text1: 'Login Failed',
@@ -40,7 +40,7 @@ export default function LoginScreen() {
     setLoading(true); // Show loading spinner
 
 
-    postRequest('/login', { email, password })
+    postRequest('/token/', { username, password })
       .then((response) => {
         // Handle successful login
         const { user } = response.data;
@@ -52,11 +52,10 @@ export default function LoginScreen() {
         router.replace('/menu');
       })
       .catch((error) => {
-        console.error('Login failed', error);
+        console.error('Login failed', error.detail);
         Toast.show({
           type: 'error',
-          text1: 'Login Failed',
-          text2: 'Invalid credentials, please try again.',
+          text2: error.detail,
         });
       })
       .finally(() => {
@@ -84,11 +83,11 @@ export default function LoginScreen() {
 
         <TextInput
           style={styles.input}
-          placeholder="Email"
+          placeholder="Username"
           placeholderTextColor="#999"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
+          value={username}
+          onChangeText={setUsername}
+          keyboardType="username-address"
           autoCapitalize="none"
         />
 
