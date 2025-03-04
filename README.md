@@ -55,4 +55,6 @@ npm  install expo-linear-gradient
 npm install react-native-toast-message
 npm install @react-navigation/native @react-navigation/drawer @react-navigation/bottom-tabs react-native-gesture-handler react-native-screens react-native-safe-area-context react-native-reanimated react-native-vector-icons react-native-paper
 npm install @react-navigation/stack
+npm install react-native-svg victory-native
+
 # ReactNativeMobileApp

@@ -8,12 +8,34 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInLeft, FadeInRight, FadeInUp } from 'react-native-reanimated';
 import BottomTabs from './BottomTabs';
 import { Divider } from 'react-native-paper';
+import UsersScreen from '../screens/UsersScreen';
+import UserDetailsScreen from '../screens/UserDetailsScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 const CustomDrawerContent = ({ navigation }: { navigation: any }) => {
     const { colors } = useTheme();
+
+
+    // Logout function
+    const handleLogout = async () => {
+        try {
+            await AsyncStorage.clear(); // Clears all stored data
+            navigation.reset({
+                index: 0,
+                routes: [{ name: '/' }], // Redirects to login or home screen
+            });
+        } catch (error) {
+            console.error("Logout Error:", error);
+        } finally {
+            navigation.reset({
+                index: 0,
+                routes: [{ name: '/' }], // Redirects to login or home screen
+            });
+        }
+    };
 
     return (
         <LinearGradient colors={["#74C369", "#2D732E"]} style={styles.drawerContainer}>
@@ -23,7 +45,7 @@ const CustomDrawerContent = ({ navigation }: { navigation: any }) => {
                     <Ionicons name="close-circle" size={32} color="#FFD700" />
                 </TouchableOpacity>
             </Animated.View>
-            
+
             {/* Hero Section */}
             <Animated.View entering={FadeInUp.duration(1000)} style={styles.heroSection}>
                 <Image source={require('@/assets/images/farm-logo.png')} style={styles.logo} />
@@ -45,7 +67,7 @@ const CustomDrawerContent = ({ navigation }: { navigation: any }) => {
             <Divider style={styles.mainDivider} />
 
             {/* Logout */}
-            <TouchableOpacity style={styles.logoutButton} onPress={() => console.log('Logout pressed')}>
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                 <MaterialIcons name="logout" size={24} color="#FFD700" />
                 <Text style={styles.logoutText}>Logout</Text>
             </TouchableOpacity>
@@ -78,6 +100,8 @@ const MainStack = ({ navigation }: { navigation: any }) => {
                 ),
             }}
         >
+            <Stack.Screen name="Users" component={UsersScreen} />
+            <Stack.Screen name="UserDetails" component={UserDetailsScreen} />
             <Stack.Screen name="BottomTabs" component={BottomTabs} options={{ title: 'AgriConnect' }} />
         </Stack.Navigator>
     );
@@ -93,6 +117,7 @@ const DrawerNavigator = () => {
             }}
         >
             <Drawer.Screen name="Main" component={MainStack} />
+
         </Drawer.Navigator>
     );
 };

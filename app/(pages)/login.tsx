@@ -22,7 +22,7 @@ export default function LoginScreen() {
     }
 
     // Proceed with authentication (replace with actual login logic)
-    console.log('Logging in...');
+    router.push('/menu')
   };
 
   return (
