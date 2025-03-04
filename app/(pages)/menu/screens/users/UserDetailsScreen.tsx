@@ -3,9 +3,10 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ActivityInd
 import { MaterialIcons } from '@expo/vector-icons';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { useNavigation } from '@react-navigation/native';
-import { getRequest, patchRequest, deleteRequest } from '@/constants/api'; // Include the patchRequest and deleteRequest
+import { getRequest, patchRequest, deleteRequest, putRequest } from '@/constants/api'; // Include the patchRequest and deleteRequest
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
+import Toast from 'react-native-toast-message';
 
 const UserDetailsScreen = ({ route }) => {
     const { userId } = route.params;  // Get userId from the navigation params
@@ -31,7 +32,15 @@ const UserDetailsScreen = ({ route }) => {
         fetchUserData();
     }, [userId]);
 
-    const toggleEdit = () => setIsEditing(!isEditing);
+    const toggleEdit = () => {
+        if (isEditing) {
+            handleSave();
+        } else {
+            // If not editing, just toggle the edit mode
+            setIsEditing(!isEditing);
+        }
+    };
+
 
     const handleDelete = async () => {
         try {
@@ -46,12 +55,27 @@ const UserDetailsScreen = ({ route }) => {
 
     const handleSave = async () => {
         try {
-            await patchRequest(`/users/${userId}/`, userData, token);  // Send PATCH request
+            // Attempt to send the updated data using a PUT request
+            await putRequest(`/users/${userId}/`, userData, token);
             setIsEditing(false); // Disable editing after saving
+
+            // Show success toast
+            Toast.show({
+                type: 'success',
+                text1: 'Success!',
+                text2: 'User data has been saved successfully.',
+            });
         } catch (error) {
+            // Show an error toast if there's an issue during the save
             console.error('Error saving user data:', error);
+            Toast.show({
+                type: 'error',
+                text1: 'Error!',
+                text2: 'Failed to save user data. Please try again.',
+            });
         }
     };
+
 
     if (isLoading) {
         return (
@@ -111,6 +135,8 @@ const UserDetailsScreen = ({ route }) => {
                     </View>
                 </View>
             </Modal>
+            {/* Toast Notification */}
+            <Toast />
         </View>
     );
 };
