@@ -48,3 +48,11 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+
+npm run reset-project
+npm  install expo-linear-gradient
+npm install react-native-toast-message
+npm install @react-navigation/native @react-navigation/drawer @react-navigation/bottom-tabs react-native-gesture-handler react-native-screens react-native-safe-area-context react-native-reanimated react-native-vector-icons react-native-paper
+npm install @react-navigation/stack
+# ReactNativeMobileApp
