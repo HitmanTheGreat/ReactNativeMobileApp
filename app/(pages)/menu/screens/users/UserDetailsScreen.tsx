@@ -1,21 +1,65 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Animated, { FadeInUp } from 'react-native-reanimated';
+import { useNavigation } from '@react-navigation/native';
+import { getRequest, patchRequest, deleteRequest } from '@/constants/api'; // Include the patchRequest and deleteRequest
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
 
-const UserDetailsScreen = ({ route, navigation }) => {
-    const { user } = route.params;
+const UserDetailsScreen = ({ route }) => {
+    const { userId } = route.params;  // Get userId from the navigation params
+    const [userData, setUserData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [userData, setUserData] = useState(user);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);  // For loading state
+    const navigation = useNavigation();
+    const token = useSelector((state: RootState) => state.user.user?.access); // Adjust the path based on your Redux state structure
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await getRequest(`/users/${userId}/`, {}, token);
+                setUserData(response);  // Assuming the user data is inside response.data
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchUserData();
+    }, [userId]);
 
     const toggleEdit = () => setIsEditing(!isEditing);
 
-    const handleDelete = () => {
-        setIsModalVisible(false);
-        // Handle user deletion logic here
-        navigation.goBack(); // Navigate back after deleting
+    const handleDelete = async () => {
+        try {
+            await deleteRequest(`/users/${userId}/`, {}, token);  // Send DELETE request
+            navigation.goBack(); // Redirect to the previous screen after successful deletion
+        } catch (error) {
+            console.error('Error deleting user:', error);
+        } finally {
+            setIsModalVisible(false); // Close modal
+        }
     };
+
+    const handleSave = async () => {
+        try {
+            await patchRequest(`/users/${userId}/`, userData, token);  // Send PATCH request
+            setIsEditing(false); // Disable editing after saving
+        } catch (error) {
+            console.error('Error saving user data:', error);
+        }
+    };
+
+    if (isLoading) {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    }
 
     return (
         <View style={styles.container}>
@@ -35,7 +79,7 @@ const UserDetailsScreen = ({ route, navigation }) => {
                 </View>
 
                 {/* User Details */}
-                {Object.keys(userData).map((key, index) => (
+                {Object.keys(userData).filter(key => key !== 'id' && key !== 'username').map((key, index) => (
                     <Animated.View key={key} entering={FadeInUp.delay(200 * index).duration(600)} style={styles.inputContainer}>
                         <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").toUpperCase()}</Text>
                         {isEditing ? (

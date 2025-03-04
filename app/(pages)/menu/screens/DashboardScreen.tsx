@@ -10,8 +10,8 @@ const Stack = createNativeStackNavigator();
 const DashboardScreen = () => {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Users" component={UsersScreen} />
+            {/* <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} /> */}
+            <Stack.Screen name="Users" component={UsersScreen}  options={{ headerShown: false }}/>
             <Stack.Screen name="UserDetails" component={UserDetailsScreen} />
             <Stack.Screen name="UserAdd" component={UsersAddScreen} />
         </Stack.Navigator>

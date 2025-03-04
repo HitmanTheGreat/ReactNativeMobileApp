@@ -24,18 +24,14 @@ const axiosInstance = axios.create({
 const handleRequest = async (
     method: "POST" | "PUT" | "PATCH" | "GET" | "DELETE",
     endpoint: string,
+    token: string | null,
     data: RequestData = {}
 ): Promise<AxiosResponse["data"]> => {
     try {
-        // Get the token from localStorage
-        const token = localStorage.getItem("authToken");
-
-       
-
         const config: AxiosRequestConfig = {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            headers: token
+                ? { Authorization: `Bearer ${token}` } // Add Authorization header only if token exists
+                : {},
         };
 
         let response;
@@ -68,18 +64,18 @@ const handleRequest = async (
     }
 };
 
-// Export functions for POST, PUT, PATCH, GET, DELETE
-export const postRequest = (endpoint: string, data: RequestData) =>
-    handleRequest("POST", endpoint, data);
+// Export functions for POST, PUT, PATCH, GET, DELETE, with token passed in as argument
+export const postRequest = (endpoint: string, data: RequestData, token: string | null) =>
+    handleRequest("POST", endpoint, token, data);
 
-export const putRequest = (endpoint: string, data: RequestData) =>
-    handleRequest("PUT", endpoint, data);
+export const putRequest = (endpoint: string, data: RequestData, token: string | null) =>
+    handleRequest("PUT", endpoint, token, data);
 
-export const patchRequest = (endpoint: string, data: RequestData) =>
-    handleRequest("PATCH", endpoint, data);
+export const patchRequest = (endpoint: string, data: RequestData, token: string | null) =>
+    handleRequest("PATCH", endpoint, token, data);
 
-export const getRequest = (endpoint: string, params: RequestData) =>
-    handleRequest("GET", endpoint, params);
+export const getRequest = (endpoint: string, params: RequestData, token: string | null) =>
+    handleRequest("GET", endpoint, token, params);
 
-export const deleteRequest = (endpoint: string, data: RequestData = {}) =>
-    handleRequest("DELETE", endpoint, data);
+export const deleteRequest = (endpoint: string, data: RequestData = {}, token: string | null) =>
+    handleRequest("DELETE", endpoint, token, data);

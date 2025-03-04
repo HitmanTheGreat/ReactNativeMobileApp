@@ -1,7 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+// Define the structure of the user state
 interface UserState {
-    user: { name: string } | null;
+    user: {
+        access: string | null;
+        refresh: string | null;
+        username: string | null;
+    } | null;
 }
 
 const initialState: UserState = {
@@ -12,9 +17,11 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        setUser: (state, action: PayloadAction<{ name: string }>) => {
+        // Set user data including access, refresh tokens, and username
+        setUser: (state, action: PayloadAction<{ access: string, refresh: string, username: string }>) => {
             state.user = action.payload;
         },
+        // Logout and clear user data
         logout: (state) => {
             state.user = null;
         },

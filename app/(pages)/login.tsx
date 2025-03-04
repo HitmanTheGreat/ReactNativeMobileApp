@@ -40,10 +40,10 @@ export default function LoginScreen() {
     setLoading(true); // Show loading spinner
 
 
-    postRequest('/token/', { username, password })
+    postRequest('/token/', { username, password } , null)
       .then((response) => {
         // Handle successful login
-        const { user } = response.data;
+        const user = { access: response.access, refresh: response.refresh , username : username };
 
         // Store user data and token in Redux
         dispatch(setUser(user));
