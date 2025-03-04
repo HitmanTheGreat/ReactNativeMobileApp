@@ -31,7 +31,7 @@ const UsersScreen = () => {
         } else {
             Alert.alert('Error', 'No authentication token available.');
         }
-    }, [token]);
+    }, []);
 
     const filteredUsers = users.filter(user =>
         user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -89,6 +89,9 @@ const UsersScreen = () => {
                 />
             </View>
 
+
+            <View style={styles.spacer} />
+
             {/* User List */}
             <FlatList
                 data={filteredUsers}
@@ -97,7 +100,7 @@ const UsersScreen = () => {
             />
 
             {/* Add User Button */}
-            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddUser')}>
+            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('UserAdd')}>
                 <Icon name="user-plus" size={24} color="#fff" />
             </TouchableOpacity>
         </View>
@@ -189,6 +192,9 @@ const styles = StyleSheet.create({
     searchInput: {
         flex: 1,
         fontSize: 16,
+    },
+    spacer: {
+        height: 30, // Adjust this value for more or less space
     },
 });
 
