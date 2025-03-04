@@ -5,8 +5,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '@/store';
-import { setUser } from '@/slices/userSlice';
+import { setUser } from '@/store/slices/userSlice';
+import { AppDispatch, RootState } from '@/store/store';
 
 export default function LoginScreen() {
   const router = useRouter();
