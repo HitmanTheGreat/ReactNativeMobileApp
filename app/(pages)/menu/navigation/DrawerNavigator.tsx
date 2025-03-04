@@ -8,8 +8,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInLeft, FadeInRight, FadeInUp } from 'react-native-reanimated';
 import BottomTabs from './BottomTabs';
 import { Divider } from 'react-native-paper';
-import UsersScreen from '../screens/UsersScreen';
-import UserDetailsScreen from '../screens/UserDetailsScreen';
+import UsersScreen from '../screens/users/UsersScreen';
+import UserDetailsScreen from '../screens/users/UserDetailsScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Drawer = createDrawerNavigator();
@@ -100,9 +100,9 @@ const MainStack = ({ navigation }: { navigation: any }) => {
                 ),
             }}
         >
-            <Stack.Screen name="Users" component={UsersScreen} />
-            <Stack.Screen name="UserDetails" component={UserDetailsScreen} />
+            
             <Stack.Screen name="BottomTabs" component={BottomTabs} options={{ title: 'AgriConnect' }} />
+
         </Stack.Navigator>
     );
 };
