@@ -8,7 +8,7 @@ import { RootState } from '@/store/store';
 import { getRequest } from '@/constants/api';
 
 const UsersScreen = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
 
     // Get token from userSlice in Redux store
     const token = useSelector((state: RootState) => state.user.user?.access); // Adjust the path based on your Redux state structure

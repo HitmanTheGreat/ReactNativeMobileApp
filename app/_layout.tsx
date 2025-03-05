@@ -33,8 +33,6 @@ export default function RootLayout() {
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />
-            <Stack.Screen name="pages/*" />
-            <Stack.Screen name="pages/menu/screens/UsersScreen" />
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style="auto" />

@@ -8,18 +8,19 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInLeft, FadeInRight, FadeInUp } from 'react-native-reanimated';
 import BottomTabs from './BottomTabs';
 import { Divider } from 'react-native-paper';
-import UsersScreen from '../main/Tabs/Dashboard/Users';
-import UserDetailsScreen from '../main/Tabs/Dashboard/Users/UserDetailsScreen';
+import UsersScreen from '../main/Tabs/Dashboard/User';
+import UserDetailsScreen from '../main/Tabs/Dashboard/User/UserDetails';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from 'react-redux';
 import { logout } from '@/store/slices/userSlice';
+import { router, useRouter } from 'expo-router';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 const CustomDrawerContent = ({ navigation }: { navigation: any }) => {
     const { colors } = useTheme();
-
+    const router = useRouter();
 
     // Logout function
     const dispatch = useDispatch();
@@ -64,13 +65,13 @@ const CustomDrawerContent = ({ navigation }: { navigation: any }) => {
             <DrawerItem icon="home" label="Home" navigation={navigation} screen="Home" />
             <Divider style={styles.divider} />
 
-            <DrawerItem icon="tree" label="Farm Types" navigation={navigation} screen="FarmTypes" />
+            <DrawerItem icon="tree" label="Farm Types" navigation={navigation} screen="FarmType" />
             <DrawerItem icon="user" label="Farmer" navigation={navigation} screen="Farmer" />
-            <DrawerItem icon="seedling" label="Crops" navigation={navigation} screen="Crops" />
+            <DrawerItem icon="seedling" label="Crops" navigation={navigation} screen="Crop" />
 
             <Divider style={styles.sectionDivider} />
 
-            <DrawerItem icon="users" label="Users" navigation={navigation} screen="Users" />
+            <DrawerItem icon="users" label="Users" navigation={navigation} screen="User" />
 
             <Divider style={styles.mainDivider} />
 
@@ -86,7 +87,7 @@ const CustomDrawerContent = ({ navigation }: { navigation: any }) => {
 // Drawer Item Component
 const DrawerItem = ({ icon, label, navigation, screen }: { icon: string, label: string, navigation: any, screen: string }) => {
     return (
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate(screen)}>
+        <TouchableOpacity style={styles.menuItem} onPress={() =>navigation.navigate(screen)}>
             <FontAwesome5 name={icon} size={22} color="#FFD700" />
             <Text style={styles.menuText}>{label}</Text>
         </TouchableOpacity>
@@ -109,7 +110,7 @@ const MainStack = ({ navigation }: { navigation: any }) => {
             }}
         >
 
-            <Stack.Screen name="Tabs" component={BottomTabs} options={{ title: 'AgriConnect' }} />
+            <Stack.Screen name="Tabs" component={BottomTabs} options={{ title: 'FarmLand' }} />
 
         </Stack.Navigator>
     );
