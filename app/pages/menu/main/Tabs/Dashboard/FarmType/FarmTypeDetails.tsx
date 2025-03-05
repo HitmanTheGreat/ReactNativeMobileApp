@@ -10,7 +10,7 @@ import Toast from 'react-native-toast-message';
 import RNPickerSelect from 'react-native-picker-select'; // Picker for dropdown selection
 
 const FarmTypeDetails = ({ route }) => {
-    const { farmerId } = route.params;  // Extract farmerId from navigation params
+    const { farmTypeId } = route.params;  // Extract farmTypeId from navigation params
     const [farmerData, setFarmerData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -22,7 +22,7 @@ const FarmTypeDetails = ({ route }) => {
         // Function to fetch farmer data on mount
         const fetchFarmerData = async () => {
             try {
-                const response = await getRequest(`/farmers/${farmerId}/`, {}, token);
+                const response = await getRequest(`/farm-types/${farmTypeId}/`, {}, token);
                 setFarmerData(response);  // Set the fetched data
             } catch (error) {
                 console.error('Error fetching farmer data:', error);
@@ -32,7 +32,7 @@ const FarmTypeDetails = ({ route }) => {
         };
 
         fetchFarmerData();
-    }, [farmerId]);
+    }, [farmTypeId, token]);
 
     const toggleEdit = () => {
         if (isEditing) {
@@ -44,7 +44,7 @@ const FarmTypeDetails = ({ route }) => {
 
     const handleDelete = async () => {
         try {
-            await deleteRequest(`/farmers/${farmerId}/`, {}, token);  // Send DELETE request
+            await deleteRequest(`/farm-types/${farmTypeId}/`, {}, token);  // Send DELETE request
             navigation.goBack();  // Navigate back after successful deletion
         } catch (error) {
             console.error('Error deleting farmer:', error);
@@ -55,7 +55,7 @@ const FarmTypeDetails = ({ route }) => {
 
     const handleSave = async () => {
         try {
-            await putRequest(`/farmers/${farmerId}/`, farmerData, token);  // Send PUT request to save data
+            await putRequest(`/farm-types/${farmTypeId}/`, farmerData, token);  // Send PUT request to save data
             setIsEditing(false);  // Disable edit mode after saving
 
             // Show success toast message
