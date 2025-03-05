@@ -8,8 +8,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInLeft, FadeInRight, FadeInUp } from 'react-native-reanimated';
 import BottomTabs from './BottomTabs';
 import { Divider } from 'react-native-paper';
-import UsersScreen from '../main/Tabs/Dashboard/User';
-import UserDetailsScreen from '../main/Tabs/Dashboard/User/UserDetails';
+import UsersScreen from '../main/User';
+import UserDetailsScreen from '../main/User/UserDetails';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from 'react-redux';
 import { logout } from '@/store/slices/userSlice';
@@ -111,6 +111,8 @@ const MainStack = ({ navigation }: { navigation: any }) => {
         >
 
             <Stack.Screen name="Tabs" component={BottomTabs} options={{ title: 'FarmLand' }} />
+            <Stack.Screen name="User" component={UsersScreen}  options={{ headerShown: false }}/>
+            
 
         </Stack.Navigator>
     );

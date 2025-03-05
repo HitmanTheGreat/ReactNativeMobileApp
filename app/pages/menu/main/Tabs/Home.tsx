@@ -3,7 +3,7 @@ import StatCard from "@/components/StatCard";
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 
-const HomeScreen: React.FC = () => {
+const HomeScreen: React.FC = ({ navigation }) => {
     // Mock Data
     const stats = {
         farms: 25,
