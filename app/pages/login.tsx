@@ -20,7 +20,7 @@ export default function LoginScreen() {
   // Check if user is already logged in
   useEffect(() => {
     if (user) {
-      router.replace('/menu'); // Redirect to menu if logged in
+      router.replace('/pages/menu'); // Redirect to menu if logged in
     } else {
       setLoading(false);
     }
@@ -40,16 +40,16 @@ export default function LoginScreen() {
     setLoading(true); // Show loading spinner
 
 
-    postRequest('/token/', { username, password } , null)
+    postRequest('/token/', { username, password }, null)
       .then((response) => {
         // Handle successful login
-        const user = { access: response.access, refresh: response.refresh , username : username };
+        const user = { access: response.access, refresh: response.refresh, username: username };
 
         // Store user data and token in Redux
         dispatch(setUser(user));
 
         // Navigate to the menu screen
-        router.replace('/menu');
+        router.replace('/pages/menu');
       })
       .catch((error) => {
         console.error('Login failed', error.detail);
