@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from .models import User, Farmer, FarmType, Crop
+from .models import CustomUser, Farmer, FarmType, Crop
 
 
 class UserGetSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'date_joined', 'last_login']
+        model = CustomUser
+        fields = '__all__'
 
 
 class FarmerGetSerializer(serializers.ModelSerializer):
@@ -31,8 +31,6 @@ class FarmTypeGetSerializer(serializers.ModelSerializer):
 
 # GET Serializer for Crop (includes related objects' details)
 class CropGetSerializer(serializers.ModelSerializer):
-    farm_type = FarmTypeGetSerializer()
-    farmer = FarmerGetSerializer()
 
     class Meta:
         model = Crop
@@ -40,8 +38,6 @@ class CropGetSerializer(serializers.ModelSerializer):
 
 # POST Serializer for Crop (expects IDs for related objects)
 class CropPostSerializer(serializers.ModelSerializer):
-    farm_type = serializers.PrimaryKeyRelatedField(queryset=FarmType.objects.all())
-    farmer = serializers.PrimaryKeyRelatedField(queryset=Farmer.objects.all())
 
     class Meta:
         model = Crop

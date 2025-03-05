@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Animated, { FadeInUp } from 'react-native-reanimated';
+import { useDispatch, useSelector } from 'react-redux';
+import Toast from 'react-native-toast-message';
+import axios from 'axios';  // Make sure to have axios installed
+import { RootState } from '@/store/store';
+import { patchRequest } from '@/constants/api';
 
 const ProfileScreen = () => {
-    const initialProfile = {
-        fullName: "John Doe",
-        email: "johndoe@example.com",
-        phone: "+123 456 7890",
-    };
-
+    const user = useSelector((state: RootState) => state.user.user);  // Assuming user is stored in the Redux store
     const [isEditing, setIsEditing] = useState(false);
-    const [profile, setProfile] = useState(initialProfile);
-    const [tempProfile, setTempProfile] = useState(initialProfile);
+    const [profile, setProfile] = useState(user);
+    const [tempProfile, setTempProfile] = useState(user);
+    const [loading, setLoading] = useState(false);
+
+    const token = useSelector((state: RootState) => state.user.access);  // Assuming user is stored in the Redux store
 
     const toggleEdit = () => {
         if (isEditing) {
@@ -27,6 +30,60 @@ const ProfileScreen = () => {
         setProfile(tempProfile); // Restore original data
         setIsEditing(false);
     };
+
+    const handleSave = async () => {
+        // Check if the email is valid
+        if (profile.email && !validateEmail(profile.email)) {
+            Toast.show({
+                type: 'error',
+                position: 'top',
+                text1: 'Invalid email address!',
+            });
+            return; // Exit the function if email is invalid
+        }
+
+        try {
+            setLoading(true);
+
+            // Prepare the endpoint and data
+
+            // Perform PATCH request to update user data
+            const response = await patchRequest(`/users/${profile.id}/`, profile, token);
+
+            // If successful, show a success toast
+            Toast.show({
+                type: 'success',
+                position: 'top',
+                text1: 'Profile updated successfully!',
+            });
+            setIsEditing(false);
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+
+            // If an error occurs, show an error toast
+            Toast.show({
+                type: 'error',
+                position: 'top',
+                text1: 'Error updating profile!',
+                text2: error.response?.data?.detail || 'Something went wrong.',
+            });
+        }
+    };
+
+
+    const validateEmail = (email: string) => {
+        // Regular expression for validating email format
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    };
+
+
+    useEffect(() => {
+        // If the profile is not set properly, you can update it from the Redux store
+        setProfile(user);
+        setTempProfile(user);
+    }, [user]);
 
     return (
         <View style={styles.container}>
@@ -53,22 +110,37 @@ const ProfileScreen = () => {
                         </View>
                     </View>
 
-                    {Object.keys(profile).map((key, index) => (
-                        <Animated.View key={key} entering={FadeInUp.delay(200 * index).duration(600)} style={styles.inputContainer}>
-                            <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").toUpperCase()}</Text>
-                            {isEditing ? (
-                                <TextInput
-                                    style={styles.input}
-                                    value={profile[key]}
-                                    onChangeText={(text) => setProfile({ ...profile, [key]: text })}
-                                />
-                            ) : (
-                                <Text style={styles.text}>{profile[key]}</Text>
-                            )}
-                        </Animated.View>
-                    ))}
+                    {Object.keys(profile)
+                        .filter((key) => !['id', 'is_staff', 'role', 'username'].includes(key)) // Skip id and is_staff
+                        .map((key, index) => (
+                            <Animated.View key={key} entering={FadeInUp.delay(200 * index).duration(600)} style={styles.inputContainer}>
+                                {/* Capitalize label and split words by underscores */}
+                                <Text style={styles.label}>
+                                    {key.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ').toUpperCase()}
+                                </Text>
+
+                                {isEditing ? (
+                                    <TextInput
+                                        style={styles.input}
+                                        value={profile[key]}
+                                        onChangeText={(text) => setProfile({ ...profile, [key]: text })}
+                                    />
+                                ) : (
+                                    <Text style={styles.text}>{profile[key]}</Text>
+                                )}
+                            </Animated.View>
+                        ))}
+
+
+
+                    {isEditing && (
+                        <TouchableOpacity onPress={handleSave} style={[styles.button, styles.saveButton]} disabled={loading}>
+                            <Text style={styles.buttonText}>{loading ? 'Saving...' : 'Save Changes'}</Text>
+                        </TouchableOpacity>
+                    )}
                 </Animated.View>
             </View>
+            <Toast ref={(ref) => Toast.setRef(ref)} />
         </View>
     );
 };
@@ -163,6 +235,14 @@ const styles = StyleSheet.create({
         color: "#333",
         paddingVertical: 10,
         textAlign: "center",
+    },
+    saveButton: {
+        backgroundColor: "#28a745",
+        marginTop: 20,
+    },
+    buttonText: {
+        color: "white",
+        fontSize: 16,
     },
 });
 

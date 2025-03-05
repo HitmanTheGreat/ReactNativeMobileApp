@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigation } from 'expo-router';
-import { useSelector } from 'react-redux';
+import { router, useNavigation, useRouter } from 'expo-router';
+import { useDispatch, useSelector } from 'react-redux';
 import { FlatList, View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Feather';
 import { RootState } from '@/store/store';
 import { getRequest } from '@/constants/api';
+import { logout } from '@/store/slices/userSlice';
+import { useFocusEffect } from '@react-navigation/native';
 
 const UsersScreen = ({ navigation }) => {
 
     // Get token from userSlice in Redux store
-    const token = useSelector((state: RootState) => state.user.user?.access); // Adjust the path based on your Redux state structure
-
+    const token = useSelector((state: RootState) => state.user?.access); // Adjust the path based on your Redux state structure
+    const router = useRouter()
+    const dispatch = useDispatch()
     const [searchQuery, setSearchQuery] = useState('');
     const [users, setUsers] = useState<any[]>([]);
 
     useEffect(() => {
-        // Fetch users when component mounts or token changes
+        // Reset search query when component mounts
+        setSearchQuery('');
+
+        // Fetch users when token is available
         if (token) {
             getRequest('/users/', {}, token)
                 .then(response => {
@@ -28,9 +34,32 @@ const UsersScreen = ({ navigation }) => {
                     Alert.alert('Error', 'Unable to fetch users.');
                 });
         } else {
+            dispatch(logout());
+            router.push('/pages/login');
             Alert.alert('Error', 'No authentication token available.');
         }
     }, []);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            if (token) {
+                getRequest('/users/', {}, token)
+                    .then(response => {
+                        // Assuming response is an array of users
+                        setUsers(response);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        Alert.alert('Error', 'Unable to fetch users.');
+                    });
+            } else {
+                dispatch(logout());
+                router.push('/pages/login');
+                Alert.alert('Error', 'No authentication token available.');
+            }
+        }, [token])
+    );
+
 
     const filteredUsers = users.filter(user =>
         user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -92,11 +121,18 @@ const UsersScreen = ({ navigation }) => {
             <View style={styles.spacer} />
 
             {/* User List */}
-            <FlatList
-                data={filteredUsers}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={renderUser}
-            />
+            {filteredUsers.length === 0 ? (
+                <View style={styles.noItemsContainer}>
+                    <Text style={styles.noItemsText}>No users to show</Text>
+                </View>
+            ) : (
+                <FlatList
+                    data={filteredUsers}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={renderUser}
+                />
+            )}
+
 
             {/* Add User Button */}
             <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('UserAdd')}>
@@ -195,6 +231,17 @@ const styles = StyleSheet.create({
     spacer: {
         height: 30, // Adjust this value for more or less space
     },
+    noItemsContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    noItemsText: {
+        fontSize: 18,
+        color: '#888',
+    },
+    
 });
 
 export default UsersScreen;

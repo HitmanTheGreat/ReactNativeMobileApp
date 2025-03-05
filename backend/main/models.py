@@ -1,12 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
-# Custom User Model
-class User(AbstractUser):
+class CustomUser(AbstractUser):
     ROLE_CHOICES = (
         ('clerk', 'Clerk'),
         ('admin', 'Admin'),
     )
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='clerk')
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='admin')
 
     # Fix conflicts by setting related_name attributes
     groups = models.ManyToManyField(Group, related_name="custom_user_groups", blank=True)
@@ -24,7 +23,7 @@ class FarmType(models.Model):
 class Crop(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
-    image = models.ImageField(upload_to='crops/')
+    image = models.ImageField(upload_to='crops/',null=True,blank=True)
 
     def __str__(self):
         return self.name

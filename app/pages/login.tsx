@@ -32,35 +32,59 @@ export default function LoginScreen() {
       Toast.show({
         type: 'error',
         text1: 'Login Failed',
-        text2: 'Email and password are required!',
+        text2: 'Username and password are required!',
       });
       return;
     }
 
     setLoading(true); // Show loading spinner
 
+    try {
+      const response = await postRequest('/token/', { username, password }, null);
 
-    postRequest('/token/', { username, password }, null)
-      .then((response) => {
-        // Handle successful login
-        const user = { access: response.access, refresh: response.refresh, username: username };
+      // Handle successful login
+      const user = { access: response.access, refresh: response.refresh, user: response.user };
 
-        // Store user data and token in Redux
-        dispatch(setUser(user));
+      // Store user data and token in Redux
+      dispatch(setUser(user));
 
-        // Navigate to the menu screen
-        router.replace('/pages/menu');
-      })
-      .catch((error) => {
-        console.error('Login failed', error.detail);
+      // Navigate to the menu screen
+      router.replace('/pages/menu');
+    } catch (error) {
+      console.error('Login failed', error);
+
+      let errorMessage = 'An error occurred, please try again.';
+
+      // Handle different types of errors
+      if (error.response) {
+        // Backend error, check for specific error details
+        if (error.response.status === 400) {
+          errorMessage = 'Invalid username or password';
+        } else if (error.response.status === 401) {
+          errorMessage = 'Unauthorized access';
+        } else {
+          errorMessage = error.response.data.detail || 'Server error occurred';
+        }
+      } else if (error.request) {
+        // Network error (no response from server)
+        errorMessage = 'Network error, please check your internet connection';
+      } else {
+        // Other errors (e.g., wrong configuration)
+        errorMessage = 'An unexpected error occurred';
+      }
+
+      setTimeout(() => {
         Toast.show({
           type: 'error',
-          text2: error.detail,
+          text1: 'Login Failed',
+          text2: errorMessage,
+          position: 'top',
         });
-      })
-      .finally(() => {
-        setLoading(false); // Hide loading spinner
-      });
+    }, 1000);
+     
+    } finally {
+      setLoading(false); // Hide loading spinner
+    }
   };
 
   if (loading) {
@@ -107,10 +131,10 @@ export default function LoginScreen() {
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
+        <Toast />
 
       </Animated.View>
 
-      <Toast />
     </LinearGradient>
   );
 }

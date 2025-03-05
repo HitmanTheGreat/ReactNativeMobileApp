@@ -3,6 +3,12 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import Animated, { FadeInUp } from 'react-native-reanimated';
+import Toast from 'react-native-toast-message';  // Import the toast notification
+import axios from 'axios';  // Import axios for API calls
+import { postRequest } from '@/constants/api';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
+import { useRouter } from 'expo-router';
 
 const SettingsScreen = () => {
     const [oldPassword, setOldPassword] = useState('');
@@ -11,6 +17,81 @@ const SettingsScreen = () => {
     const [secureOld, setSecureOld] = useState(true);
     const [secureNew, setSecureNew] = useState(true);
     const [secureConfirm, setSecureConfirm] = useState(true);
+    const token = useSelector((state: RootState) => state.user.access);  // Assuming user is stored in the Redux store
+    const router = useRouter()
+    // Function to handle form submission
+    const handleSaveChanges = async () => {
+        // Validate that none of the fields are empty
+        if (!oldPassword || !newPassword || !confirmPassword) {
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Please fill in all fields',
+                position: 'bottom',
+            });
+            return;
+        }
+
+        // Check if new password and confirm password match
+        if (newPassword !== confirmPassword) {
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'New passwords do not match',
+                position: 'bottom',
+            });
+            return;
+        }
+
+        // Check if the new password is at least 8 characters long
+        if (newPassword.length < 8) {
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'New password must be at least 8 characters long',
+                position: 'bottom',
+            });
+            return;
+        }
+
+        // Prepare data for the API request
+        const data = {
+            old_password: oldPassword,
+            new_password: newPassword,
+        };
+
+        try {
+            // Make the API call to the backend to change the password
+            const response = await postRequest('/change-password/', data, token);
+
+            // Show success message
+            Toast.show({
+                type: 'success',
+                text1: 'Success',
+                text2: 'Password changed successfully!',
+                position: 'bottom',
+            });
+
+            // Optionally, reset the fields after a successful change
+            setOldPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+
+            setTimeout(() => {
+                router.push('/')
+            }, 2000);
+
+        } catch (error) {
+            // Handle any errors from the backend (e.g., invalid old password)
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: error.response ? error.response.data.detail : 'An error occurred',
+                position: 'bottom',
+            });
+        }
+    };
+
 
     return (
         <LinearGradient colors={["#2D732E", "#74C369"]} style={styles.container}>
@@ -64,11 +145,14 @@ const SettingsScreen = () => {
 
                 {/* Save Button */}
                 <Animated.View entering={FadeInUp.delay(800).duration(800)} style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button} onPress={handleSaveChanges}>
                         <Text style={styles.buttonText}>Save Changes</Text>
                     </TouchableOpacity>
                 </Animated.View>
             </Animated.View>
+
+            {/* Toast notification */}
+            <Toast />
         </LinearGradient>
     );
 };

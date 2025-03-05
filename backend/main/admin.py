@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import FarmType, Crop, Farmer, User
+from .models import FarmType, Crop, Farmer, CustomUser
 
 @admin.register(FarmType)
 class FarmTypeAdmin(admin.ModelAdmin):
@@ -13,6 +13,6 @@ class CropAdmin(admin.ModelAdmin):
 class FarmerAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'national_id', 'location', 'farm_type', 'crop']
 
-@admin.register(User)
+@admin.register(CustomUser)
 class UserAdmin(admin.ModelAdmin):
     list_display = ['id', 'username', 'email', 'role']

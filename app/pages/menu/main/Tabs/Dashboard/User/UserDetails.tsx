@@ -7,6 +7,7 @@ import { getRequest, patchRequest, deleteRequest, putRequest } from '@/constants
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import Toast from 'react-native-toast-message';
+import RNPickerSelect from 'react-native-picker-select'; // Import the picker
 
 const UserDetailsScreen = ({ route }) => {
     const { userId } = route.params;  // Get userId from the navigation params
@@ -15,7 +16,7 @@ const UserDetailsScreen = ({ route }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(true);  // For loading state
     const navigation = useNavigation();
-    const token = useSelector((state: RootState) => state.user.user?.access); // Adjust the path based on your Redux state structure
+    const token = useSelector((state: RootState) => state.user.access); // Adjust the path based on your Redux state structure
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -40,7 +41,6 @@ const UserDetailsScreen = ({ route }) => {
             setIsEditing(!isEditing);
         }
     };
-
 
     const handleDelete = async () => {
         try {
@@ -76,6 +76,32 @@ const UserDetailsScreen = ({ route }) => {
         }
     };
 
+    const handleChange = (key, value) => {
+        setUserData(prevData => ({ ...prevData, [key]: value }));
+    };
+
+    const pickerSelectStyles = {
+        inputIOS: {
+            fontSize: 16,
+            paddingVertical: 12,
+            paddingHorizontal: 10,
+            borderWidth: 1,
+            borderColor: '#ccc',
+            borderRadius: 4,
+            color: 'black',
+            paddingRight: 30, // to give space for the icon
+        },
+        inputAndroid: {
+            fontSize: 16,
+            paddingVertical: 12,
+            paddingHorizontal: 10,
+            borderWidth: 1,
+            borderColor: '#ccc',
+            borderRadius: 4,
+            color: 'black',
+            paddingRight: 30, // to give space for the icon
+        },
+    };
 
     if (isLoading) {
         return (
@@ -103,20 +129,41 @@ const UserDetailsScreen = ({ route }) => {
                 </View>
 
                 {/* User Details */}
-                {Object.keys(userData).filter(key => key !== 'id' && key !== 'username').map((key, index) => (
-                    <Animated.View key={key} entering={FadeInUp.delay(200 * index).duration(600)} style={styles.inputContainer}>
-                        <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").toUpperCase()}</Text>
-                        {isEditing ? (
-                            <TextInput
-                                style={styles.input}
-                                value={userData[key]}
-                                onChangeText={(text) => setUserData({ ...userData, [key]: text })}
-                            />
-                        ) : (
-                            <Text style={styles.text}>{userData[key]}</Text>
-                        )}
-                    </Animated.View>
-                ))}
+                {Object.keys(userData)
+                    .filter(key => !['id', 'username', 'password', 'last_login', 'is_superuser', 'is_staff', 'is_active', 'date_joined', 'groups', 'user_permissions'].includes(key)) // Skip these fields
+                    .map((key, index) => (
+                        <Animated.View key={key} entering={FadeInUp.delay(200 * index).duration(600)} style={styles.inputContainer}>
+                            <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").toUpperCase()}</Text>
+
+                            {/* Conditionally render a dropdown for 'role' using RNPickerSelect */}
+                            {key === 'role' ? (
+                                isEditing ? (
+                                    <RNPickerSelect
+                                        style={pickerSelectStyles}
+                                        value={userData[key]} // The selected value of the dropdown
+                                        onValueChange={(value) => handleChange('role', value)} // Updates the role value
+                                        items={[
+                                            { label: 'Clerk', value: 'clerk' },
+                                            { label: 'Admin', value: 'admin' },
+                                        ]}
+                                    />
+                                ) : (
+                                    <Text style={styles.text}>{userData[key]}</Text>
+                                )
+                            ) : (
+                                isEditing ? (
+                                    <TextInput
+                                        style={styles.input}
+                                        value={userData[key]}
+                                        onChangeText={(text) => setUserData({ ...userData, [key]: text })}
+                                    />
+                                ) : (
+                                    <Text style={styles.text}>{userData[key]}</Text>
+                                )
+                            )}
+                        </Animated.View>
+                    ))}
+
             </Animated.View>
 
             {/* Delete Confirmation Modal */}
@@ -163,6 +210,26 @@ const styles = StyleSheet.create({
     cancelButton: { backgroundColor: "#757575" },
     confirmButton: { backgroundColor: "#D32F2F" },
     modalButtonText: { color: "white", fontWeight: "bold", fontSize: 16 },
+    inputIOS: {
+        fontSize: 16,
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 4,
+        color: 'black',
+        paddingRight: 30, // to give space for the icon
+    },
+    inputAndroid: {
+        fontSize: 16,
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 4,
+        color: 'black',
+        paddingRight: 30, // to give space for the icon
+    },
 });
 
 export default UserDetailsScreen;

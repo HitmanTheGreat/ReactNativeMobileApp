@@ -4,20 +4,21 @@ import { useSelector } from 'react-redux'; // Import useSelector from react-redu
 import Toast from 'react-native-toast-message';
 import { postRequest } from '@/constants/api';
 import { ScrollView } from 'react-native-gesture-handler';
+import RNPickerSelect from 'react-native-picker-select'; // Import the picker
 
 const UsersAddScreen = () => {
     const [userData, setUserData] = useState({
-        username: '',  // Added username field
+        username: '',
         fullName: '',
         email: '',
         phone: '',
         password: '',
         confirmPassword: '',
+        role: 'clerk',  // Default role
     });
 
-    const [loading, setLoading] = useState(false); // Optional: For handling loading state
+    const [loading, setLoading] = useState(false);
 
-    // Get the token from Redux state
     const token = useSelector((state) => state.user.access); // Assuming the token is stored in state.user.access
 
     const handleChange = (field, value) => {
@@ -25,17 +26,17 @@ const UsersAddScreen = () => {
     };
 
     const handleSubmit = async () => {
-        // Validation: Check if all required fields are filled
+        // Check if any field is empty
         if (!userData.username || !userData.fullName || !userData.email || !userData.password || !userData.confirmPassword) {
             Toast.show({
                 type: 'error',
                 text1: 'Error!',
                 text2: 'Please fill all fields before submitting.',
             });
-            return; // Prevent submission if any field is empty
+            return;
         }
 
-        // Validation: Check if password and confirmPassword match
+        // Check if passwords match
         if (userData.password !== userData.confirmPassword) {
             Toast.show({
                 type: 'error',
@@ -45,15 +46,26 @@ const UsersAddScreen = () => {
             return;
         }
 
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(userData.email)) {
+            Toast.show({
+                type: 'error',
+                text1: 'Error!',
+                text2: 'Please enter a valid email address.',
+            });
+            return;
+        }
+
         try {
             setLoading(true);
-            // Prepare the data with the always required fields
             const dataToSubmit = {
                 username: userData.username,
                 fullName: userData.fullName,
                 email: userData.email,
-                phone: userData.phone || '', // If phone is empty, send an empty string
+                phone: userData.phone || '',
                 password: userData.password,
+                role: userData.role, // Send the role
             };
 
             const response = await postRequest('/users/', dataToSubmit, token);
@@ -64,7 +76,6 @@ const UsersAddScreen = () => {
                     text1: 'Success!',
                     text2: 'User added successfully.',
                 });
-                // Clear form data after successful submission
                 setUserData({
                     username: '',
                     fullName: '',
@@ -72,6 +83,7 @@ const UsersAddScreen = () => {
                     phone: '',
                     password: '',
                     confirmPassword: '',
+                    role: 'clerk',  // Reset role after submission
                 });
             } else {
                 Toast.show({
@@ -87,7 +99,7 @@ const UsersAddScreen = () => {
                 text2: error.message,
             });
         } finally {
-            setLoading(false); // Optionally handle the loading state
+            setLoading(false);
         }
     };
 
@@ -163,6 +175,20 @@ const UsersAddScreen = () => {
                         />
                     </View>
 
+                    {/* Role Dropdown */}
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.label}>Role</Text>
+                        <RNPickerSelect
+                            style={pickerSelectStyles}
+                            value={userData.role}
+                            onValueChange={(value) => handleChange('role', value)}
+                            items={[
+                                { label: 'Clerk', value: 'clerk' },
+                                { label: 'Admin', value: 'admin' },
+                            ]}
+                        />
+                    </View>
+
                     {/* Submit Button */}
                     <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
                         <Text style={styles.buttonText}>
@@ -178,6 +204,23 @@ const UsersAddScreen = () => {
         </ScrollView>
     );
 };
+
+const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+        backgroundColor: '#F5F5F5',
+        padding: 10,
+        borderRadius: 8,
+        fontSize: 16,
+        color: '#333',
+    },
+    inputAndroid: {
+        backgroundColor: '#F5F5F5',
+        padding: 10,
+        borderRadius: 8,
+        fontSize: 16,
+        color: '#333',
+    },
+});
 
 const styles = StyleSheet.create({
     container: {
@@ -234,7 +277,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     spacer: {
-        height: 50, // Adjust this value for more or less space
+        height: 50,
     },
 });
 

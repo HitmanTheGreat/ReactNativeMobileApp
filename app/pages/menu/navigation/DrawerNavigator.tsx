@@ -8,12 +8,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInLeft, FadeInRight, FadeInUp } from 'react-native-reanimated';
 import BottomTabs from './BottomTabs';
 import { Divider } from 'react-native-paper';
-import UsersScreen from '../main/User';
-import UserDetailsScreen from '../main/User/UserDetails';
+import UsersScreen from '../main/Tabs/Dashboard/User';
+import UserDetailsScreen from '../main/Tabs/Dashboard/User/UserDetails';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '@/store/slices/userSlice';
 import { router, useRouter } from 'expo-router';
+import { RootState } from '@/store/store';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -21,12 +22,17 @@ const Stack = createStackNavigator();
 const CustomDrawerContent = ({ navigation }: { navigation: any }) => {
     const { colors } = useTheme();
     const router = useRouter();
+    
+    const user = useSelector((state: RootState) => state.user.user);
+
+
+    const isAdmin = user?.role === 'admin'; 
+    const isClerk = user?.role === 'clerk'; 
 
     // Logout function
     const dispatch = useDispatch();
 
     const handleLogout = async () => {
-        const dispatch = useDispatch();
 
         try {
             // Clear AsyncStorage
@@ -38,8 +44,10 @@ const CustomDrawerContent = ({ navigation }: { navigation: any }) => {
             // Reset navigation to Login screen
             navigation.reset({
                 index: 0,
-                routes: [{ name: 'Login' }], // Ensure 'Login' matches your route name
+                routes: [{ name: '/' }], // Ensure 'Login' matches your route name
             });
+
+            router.push('/')
 
         } catch (error) {
             console.error("Logout Error:", error);
@@ -62,16 +70,33 @@ const CustomDrawerContent = ({ navigation }: { navigation: any }) => {
 
 
             {/* Navigation Links */}
-            <DrawerItem icon="home" label="Home" navigation={navigation} screen="Home" />
-            <Divider style={styles.divider} />
+            {/* Show Home and Farmer if the role is Clerk */}
+            {isClerk && (
+                <>
+                    <DrawerItem icon="home" label="Home" navigation={navigation} screen="Home" />
+                    <Divider style={styles.divider} />
+                    <DrawerItem icon="user" label="Farmer" navigation={navigation} screen="Farmer" />
+                </>
+            )}
 
-            <DrawerItem icon="tree" label="Farm Types" navigation={navigation} screen="FarmType" />
-            <DrawerItem icon="user" label="Farmer" navigation={navigation} screen="Farmer" />
-            <DrawerItem icon="seedling" label="Crops" navigation={navigation} screen="Crop" />
+            {/* Show all items if the role is Admin */}
+            {isAdmin && (
+                <>
+                    <DrawerItem icon="home" label="Home" navigation={navigation} screen="Home" />
+                    <Divider style={styles.divider} />
+                    <DrawerItem icon="tree" label="Farm Types" navigation={navigation} screen="FarmType" />
+                    <DrawerItem icon="user" label="Farmer" navigation={navigation} screen="Farmer" />
+                    <DrawerItem icon="seedling" label="Crops" navigation={navigation} screen="Crop" />
+                </>
+            )}
 
-            <Divider style={styles.sectionDivider} />
-
-            <DrawerItem icon="users" label="Users" navigation={navigation} screen="User" />
+            {/* Show Users only for Admin */}
+            {isAdmin && (
+                <>
+                    <Divider style={styles.sectionDivider} />
+                    <DrawerItem icon="users" label="Users" navigation={navigation} screen="User" />
+                </>
+            )}
 
             <Divider style={styles.mainDivider} />
 
@@ -111,7 +136,6 @@ const MainStack = ({ navigation }: { navigation: any }) => {
         >
 
             <Stack.Screen name="Tabs" component={BottomTabs} options={{ title: 'FarmLand' }} />
-            <Stack.Screen name="User" component={UsersScreen}  options={{ headerShown: false }}/>
             
 
         </Stack.Navigator>
