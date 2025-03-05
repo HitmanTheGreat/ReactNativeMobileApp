@@ -8,8 +8,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInLeft, FadeInRight, FadeInUp } from 'react-native-reanimated';
 import BottomTabs from './BottomTabs';
 import { Divider } from 'react-native-paper';
-import UsersScreen from '../screens/users/UsersScreen';
-import UserDetailsScreen from '../screens/users/UserDetailsScreen';
+import UsersScreen from '../main/Tabs/Dashboard/Users';
+import UserDetailsScreen from '../main/Tabs/Dashboard/Users/UserDetailsScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from 'react-redux';
 import { logout } from '@/store/slices/userSlice';
@@ -109,7 +109,7 @@ const MainStack = ({ navigation }: { navigation: any }) => {
             }}
         >
 
-            <Stack.Screen name="BottomTabs" component={BottomTabs} options={{ title: 'AgriConnect' }} />
+            <Stack.Screen name="Tabs" component={BottomTabs} options={{ title: 'AgriConnect' }} />
 
         </Stack.Navigator>
     );
@@ -124,7 +124,7 @@ const DrawerNavigator = () => {
                 headerShown: false,
             }}
         >
-            <Drawer.Screen name="Main" component={MainStack} />
+            <Drawer.Screen name="main" component={MainStack} />
 
         </Drawer.Navigator>
     );
