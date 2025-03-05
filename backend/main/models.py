@@ -28,11 +28,33 @@ class Crop(models.Model):
     def __str__(self):
         return self.name
 
-# Farmer Model
 class Farmer(models.Model):
+    # Predefined list of towns in Zimbabwe in alphabetical order
+    ZIMBABWE_TOWNS = [
+        ('Harare', 'Harare'),
+        ('Bulawayo', 'Bulawayo'),
+        ('Mutare', 'Mutare'),
+        ('Gweru', 'Gweru'),
+        ('Kwekwe', 'Kwekwe'),
+        ('Chinhoyi', 'Chinhoyi'),
+        ('Masvingo', 'Masvingo'),
+        ('Kadoma', 'Kadoma'),
+        ('Marondera', 'Marondera'),
+        ('Zvishavane', 'Zvishavane'),
+        ('Victoria Falls', 'Victoria Falls'),
+        ('Kariba', 'Kariba'),
+        ('Bindura', 'Bindura'),
+        ('Chipinge', 'Chipinge'),
+        # Add more towns here if needed
+    ]
+    
     name = models.CharField(max_length=255)
     national_id = models.CharField(max_length=20, unique=True)
-    location = models.CharField(max_length=255)
+    location = models.CharField(
+        max_length=255,
+        choices=ZIMBABWE_TOWNS,
+        default='Harare'  # Default can be set to any town or leave empty
+    )
     farm_type = models.ForeignKey(FarmType, on_delete=models.CASCADE)
     crop = models.ForeignKey(Crop, on_delete=models.CASCADE)
 

@@ -94,11 +94,11 @@ const CropsScreen = ({ navigation }) => {
             <TouchableOpacity onPress={() => navigation.navigate('CropDetails', { cropId: item.id })}>
                 <View style={styles.cropCard}>
                     <Text style={styles.cropName}>{item.name}</Text>
-                    <Text style={styles.cropDescription}>{item.description}</Text>
                     <Image
                         source={{ uri: item.image || 'https://via.placeholder.com/150' }} // Fallback to placeholder image if no image
                         style={styles.cropImage}
                     />
+                    <Text style={styles.cropDescription}>{item.description}</Text>
                 </View>
             </TouchableOpacity>
         </Swipeable>

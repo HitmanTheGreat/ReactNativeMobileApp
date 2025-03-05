@@ -8,6 +8,12 @@ import FarmTypesScreen from './main/Tabs/Dashboard/FarmType';
 import CropsScreen from './main/Tabs/Dashboard/Crop';
 import CropDetailsScreen from './main/Tabs/Dashboard/Crop/CropDetails';
 import CropsAddScreen from './main/Tabs/Dashboard/Crop/CropAdd';
+import FarmersScreen from './main/Tabs/Dashboard/Farmer';
+import FarmerDetailScreen from './main/Tabs/Dashboard/Farmer/FarmerDetails';
+import FarmerAddScreen from './main/Tabs/Dashboard/Farmer/FarmerAdd';
+import FarmerTypeDetails from './main/Tabs/Dashboard/FarmType/FarmTypeDetails';
+import FarmTypeAdd from './main/Tabs/Dashboard/FarmType/FarmTypeAdd';
+import FarmTypeDetails from './main/Tabs/Dashboard/FarmType/FarmTypeDetails';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,11 +27,17 @@ const DashboardScreen = () => {
             <Stack.Screen name="UserDetails" component={UserDetailsScreen} />
             <Stack.Screen name="UserAdd" component={UsersAddScreen} /> */}
             {/* Crops */}
-            <Stack.Screen name="Crop" component={CropsScreen} options={{ headerShown: false }} />
+            {/* <Stack.Screen name="Crop" component={CropsScreen} options={{ headerShown: false }} />
             <Stack.Screen name="CropDetails" component={CropDetailsScreen} />
-            <Stack.Screen name="CropAdd" component={CropsAddScreen} />
-
+            <Stack.Screen name="CropAdd" component={CropsAddScreen} /> */}
+            {/* Farmer */}
+            {/* <Stack.Screen name="Farmer" component={FarmersScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="FarmerDetails" component={FarmerDetailScreen} />
+            <Stack.Screen name="FarmerAdd" component={FarmerAddScreen} /> */}
+            {/* FarmType */}
             <Stack.Screen name="FarmType" component={FarmTypesScreen} />
+            <Stack.Screen name="FarmTypeDetails" component={FarmTypeDetails} />
+            <Stack.Screen name="FarmTypeAdd" component={FarmTypeAdd} />
 
         </Stack.Navigator>
     );

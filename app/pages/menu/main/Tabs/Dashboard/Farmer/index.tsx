@@ -9,28 +9,28 @@ import { getRequest } from '@/constants/api';
 import { logout } from '@/store/slices/userSlice';
 import { useFocusEffect } from '@react-navigation/native';
 
-const FarmTypeScreen = ({ navigation }) => {
+const FarmersScreen = ({ navigation }) => {
     // Get token from userSlice in Redux store
     const token = useSelector((state: RootState) => state.user?.access); // Adjust the path based on your Redux state structure
     const router = useRouter();
     const dispatch = useDispatch();
     const [searchQuery, setSearchQuery] = useState('');
-    const [farmTypes, setFarmTypes] = useState<any[]>([]);
+    const [farmers, setFarmers] = useState<any[]>([]);
 
     useEffect(() => {
         // Reset search query when component mounts
         setSearchQuery('');
 
-        // Fetch farm types when token is available
+        // Fetch farmers when token is available
         if (token) {
-            getRequest('/farm-types/', {}, token)
+            getRequest('/farmers/', {}, token)
                 .then(response => {
-                    // Assuming response is an array of farm types
-                    setFarmTypes(response);
+                    // Assuming response is an array of farmers
+                    setFarmers(response);
                 })
                 .catch(error => {
                     console.error(error);
-                    Alert.alert('Error', 'Unable to fetch farm types.');
+                    Alert.alert('Error', 'Unable to fetch farmers.');
                 });
         } else {
             dispatch(logout());
@@ -42,14 +42,14 @@ const FarmTypeScreen = ({ navigation }) => {
     useFocusEffect(
         React.useCallback(() => {
             if (token) {
-                getRequest('/farm-types/', {}, token)
+                getRequest('/farmers/', {}, token)
                     .then(response => {
-                        // Assuming response is an array of farm types
-                        setFarmTypes(response);
+                        // Assuming response is an array of farmers
+                        setFarmers(response);
                     })
                     .catch(error => {
                         console.error(error);
-                        Alert.alert('Error', 'Unable to fetch farm types.');
+                        Alert.alert('Error', 'Unable to fetch farmers.');
                     });
             } else {
                 dispatch(logout());
@@ -59,13 +59,14 @@ const FarmTypeScreen = ({ navigation }) => {
         }, [token])
     );
 
-    const filteredFarmTypes = farmTypes.filter(farmType =>
-        farmType.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredFarmers = farmers.filter(farmer =>
+        farmer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        farmer.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const renderRightActions = (id: number) => (
         <View style={styles.actions}>
-            <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('EditFarmType', { farmTypeId: id })}>
+            <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('EditFarmer', { farmerId: id })}>
                 <Icon name="edit" size={20} color="#fff" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(id)}>
@@ -76,23 +77,25 @@ const FarmTypeScreen = ({ navigation }) => {
 
     const handleDelete = (id: number) => {
         // Handle the delete action
-        Alert.alert('Delete', `Are you sure you want to delete farm type with ID ${id}?`, [
+        Alert.alert('Delete', `Are you sure you want to delete farmer with ID ${id}?`, [
             { text: 'Cancel' },
             {
                 text: 'Delete', onPress: () => {
                     // Delete logic here
-                    console.log(`Farm type ${id} deleted.`);
+                    console.log(`Farmer ${id} deleted.`);
                 }
             }
         ]);
     };
 
-    const renderFarmType = ({ item }: { item: any }) => (
+    const renderFarmer = ({ item }: { item: any }) => (
         <Swipeable renderRightActions={() => renderRightActions(item.id)}>
-            <TouchableOpacity onPress={() => navigation.navigate('FarmTypeDetails', { farmTypeId: item.id })}>
-                <View style={styles.farmTypeCard}>
-                    <Text style={styles.farmTypeName}>{item.name}</Text>
-                    <Text style={styles.farmTypeDescription}>{item.description}</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('FarmerDetails', { farmerId: item.id })}>
+                <View style={styles.farmerCard}>
+                    <Text style={styles.farmerName}>{item.name}</Text>
+                    <Text style={styles.farmerUsername}>@{item.username}</Text>
+                    <Text style={styles.farmerEmail}>{item.email}</Text>
+                    <Text style={styles.farmerLocation}>Location: {item.location}</Text>
                 </View>
             </TouchableOpacity>
         </Swipeable>
@@ -105,7 +108,7 @@ const FarmTypeScreen = ({ navigation }) => {
                 <Icon name="search" size={20} color="#aaa" style={styles.icon} />
                 <TextInput
                     style={styles.searchInput}
-                    placeholder="Search farm types..."
+                    placeholder="Search farmers..."
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                 />
@@ -113,22 +116,22 @@ const FarmTypeScreen = ({ navigation }) => {
 
             <View style={styles.spacer} />
 
-            {/* Farm Type List */}
-            {filteredFarmTypes.length === 0 ? (
+            {/* Farmer List */}
+            {filteredFarmers.length === 0 ? (
                 <View style={styles.noItemsContainer}>
-                    <Text style={styles.noItemsText}>No farm types to show</Text>
+                    <Text style={styles.noItemsText}>No farmers to show</Text>
                 </View>
             ) : (
                 <FlatList
-                    data={filteredFarmTypes}
+                    data={filteredFarmers}
                     keyExtractor={(item) => item.id.toString()}
-                    renderItem={renderFarmType}
+                    renderItem={renderFarmer}
                 />
             )}
 
-            {/* Add Farm Type Button */}
-            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('FarmTypeAdd')}>
-                <Icon name="plus-circle" size={24} color="#fff" />
+            {/* Add Farmer Button */}
+            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('FarmerAdd')}>
+                <Icon name="user-plus" size={24} color="#fff" />
             </TouchableOpacity>
         </View>
     );
@@ -140,7 +143,7 @@ const styles = StyleSheet.create({
         padding: 16,
         backgroundColor: '#F8F8F8',
     },
-    farmTypeCard: {
+    farmerCard: {
         padding: 16,
         backgroundColor: '#fff',
         borderRadius: 8,
@@ -150,13 +153,26 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         shadowOffset: { width: 0, height: 2 },
     },
-    farmTypeName: {
+    farmerName: {
         fontSize: 16,
         fontWeight: 'bold',
     },
-    farmTypeDescription: {
+    farmerUsername: {
+        fontSize: 14,
+        color: '#28A745',
+        marginBottom: 4,
+    },
+    farmerEmail: {
         fontSize: 14,
         color: '#666',
+    },
+    farmerLocation: {
+        fontSize: 12,
+        color: '#aaa',
+    },
+    farmerCrops: {
+        fontSize: 12,
+        color: '#aaa',
     },
     actions: {
         flexDirection: 'row',
@@ -222,4 +238,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default FarmTypeScreen;
+export default FarmersScreen;
