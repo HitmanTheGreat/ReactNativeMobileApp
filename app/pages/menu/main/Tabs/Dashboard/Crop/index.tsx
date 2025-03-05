@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { router, useNavigation, useRouter } from 'expo-router';
+import { router, useRouter } from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { FlatList, View, Text, TextInput, StyleSheet, Alert, TouchableOpacity, Image } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
@@ -12,9 +12,9 @@ import { useFocusEffect } from '@react-navigation/native';
 const CropsScreen = ({ navigation }) => {
 
     // Get token from userSlice in Redux store
-    const token = useSelector((state: RootState) => state.user?.access); // Adjust the path based on your Redux state structure
-    const router = useRouter()
-    const dispatch = useDispatch()
+    const token = useSelector((state: RootState) => state.user?.access);
+    const router = useRouter();
+    const dispatch = useDispatch();
     const [searchQuery, setSearchQuery] = useState('');
     const [crops, setCrops] = useState<any[]>([]);
 
@@ -60,7 +60,6 @@ const CropsScreen = ({ navigation }) => {
         }, [token])
     );
 
-
     const filteredCrops = crops.filter(crop =>
         crop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         crop.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -97,7 +96,7 @@ const CropsScreen = ({ navigation }) => {
                     <Text style={styles.cropName}>{item.name}</Text>
                     <Text style={styles.cropDescription}>{item.description}</Text>
                     <Image
-                        source={{ uri: item.image }}
+                        source={{ uri: item.image || 'https://via.placeholder.com/150' }} // Fallback to placeholder image if no image
                         style={styles.cropImage}
                     />
                 </View>
@@ -118,7 +117,6 @@ const CropsScreen = ({ navigation }) => {
                 />
             </View>
 
-
             <View style={styles.spacer} />
 
             {/* Crop List */}
@@ -133,7 +131,6 @@ const CropsScreen = ({ navigation }) => {
                     renderItem={renderCrop}
                 />
             )}
-
 
             {/* Add Crop Button */}
             <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('CropAdd')}>
