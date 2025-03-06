@@ -12,6 +12,8 @@ import UserScreen from '../screens/User';
 import CustomeIconSymbol from '@/components/ui/CustomeIconSymbol';
 import { Text, View, StyleSheet } from 'react-native';
 import CustomDrawerContent from '@/components/CustomDrawerContent';
+import FarmerDetailScreen from '../screens/Farmer/FarmerDetails';
+import FarmerAddScreen from '../screens/Farmer/FarmerAdd';
 
 const Drawer = createDrawerNavigator();
 
@@ -64,6 +66,37 @@ export default function TabLayout() {
             <View style={styles.drawerItem}>
               <CustomeIconSymbol size={20} name="person" color={color} />
               <Text style={[styles.drawerText, { color }]}>Farmer</Text>
+            </View>
+          ),
+          drawerIcon: () => null,
+        }}
+      />
+
+
+      <Drawer.Screen
+        name="FarmerAdd"
+        component={FarmerAddScreen}
+        options={{
+          title: 'Add Farmer',
+          drawerLabel: ({ color }) => (
+            <View style={styles.drawerItem}>
+              <CustomeIconSymbol size={20} name="person-add" color={color} />
+              <Text style={[styles.drawerText, { color }]}>Add Farmer</Text>
+            </View>
+          ),
+          drawerIcon: () => null,
+        }}
+      />
+
+      <Drawer.Screen
+        name="FarmerDetails"
+        component={FarmerDetailScreen}
+        options={{
+          title: 'Farmer Details',
+          drawerLabel: ({ color }) => (
+            <View style={styles.drawerItem}>
+              <CustomeIconSymbol size={20} name="info" color={color} />
+              <Text style={[styles.drawerText, { color }]}>Farmer Details</Text>
             </View>
           ),
           drawerIcon: () => null,

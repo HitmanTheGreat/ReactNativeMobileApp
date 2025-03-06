@@ -53,7 +53,7 @@ const FarmersScreen = ({ navigation }) => {
                     });
             } else {
                 dispatch(logout());
-                router.push('/pages/login');
+                router.push('/login');
                 Alert.alert('Error', 'No authentication token available.');
             }
         }, [token])
@@ -130,7 +130,7 @@ const FarmersScreen = ({ navigation }) => {
             )}
 
             {/* Add Farmer Button */}
-            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('FarmerAdd')}>
+            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('Farmer.FarmerAdd')}>
                 <Icon name="user-plus" size={24} color="#fff" />
             </TouchableOpacity>
         </View>
