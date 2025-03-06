@@ -8,23 +8,36 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { persistor, store } from '@/store/store';
+import { FC } from 'react';
 
+// Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+// Type for your loading screen component
+const LoadingScreen: FC = () => {
+  return (
+    <div>Loading...</div> // Customize this with a proper loading component
+  );
+};
+
+const RootLayout: FC = () => {
   const colorScheme = useColorScheme();
+  
+  // Load fonts using the `useFonts` hook
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
+  // Hide splash screen once fonts are loaded
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
 
+  // If fonts are not loaded yet, return a loading screen
   if (!loaded) {
-    return <LoadingScreen />; // Add a loading screen here while fonts load
+    return <LoadingScreen />;
   }
 
   return (
@@ -35,9 +48,11 @@ export default function RootLayout() {
             <Stack.Screen name="pages" />
             <Stack.Screen name="+not-found" />
           </Stack>
-          <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} /> {/* Adjust status bar style */}
+          <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
         </ThemeProvider>
       </PersistGate>
     </Provider>
   );
-}
+};
+
+export default RootLayout;

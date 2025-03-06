@@ -72,7 +72,7 @@ export default function LoginScreen() {
 
       // Navigate to the menu screen
       router.replace('/pages/menu');
-    } catch (error) {
+    } catch (error : any) {
       console.error('Login failed', error);
 
       let errorMessage = 'An error occurred, please try again.';

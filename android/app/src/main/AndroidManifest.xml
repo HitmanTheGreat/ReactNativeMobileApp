@@ -28,6 +28,7 @@
         <data android:scheme="myapp"/>
         <data android:scheme="com.anonymous.myapp"/>
         <data android:scheme="exp+my-app"/>
+        <data android:scheme="exp+farmland"/>
       </intent-filter>
     </activity>
   </application>

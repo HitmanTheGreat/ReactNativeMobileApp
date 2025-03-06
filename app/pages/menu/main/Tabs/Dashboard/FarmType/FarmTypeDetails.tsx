@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'; // For off
 
 // Define types for the farmer data and props
 interface FarmerData {
-    [key: string]: string | number;
+    [key: string]: string | number | null;
 }
 
 interface FarmTypeDetailsProps {
@@ -25,7 +25,7 @@ interface FarmTypeDetailsProps {
 
 const FarmTypeDetails: React.FC<FarmTypeDetailsProps> = ({ route }) => {
     const { farmTypeId } = route.params;  // Extract farmTypeId from navigation params
-    const [farmerData, setFarmerData] = useState<FarmerData | null>(null);
+    const [farmerData, setFarmerData] = useState<any>(null);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);  // State to handle loading spinner
@@ -105,7 +105,7 @@ const FarmTypeDetails: React.FC<FarmTypeDetailsProps> = ({ route }) => {
     };
 
     const handleChange = (key: string, value: string) => {
-        setFarmerData((prevData) => ({ ...prevData, [key]: value }));
+        setFarmerData((prevData : any) => ({ ...prevData, [key]: value }));
     };
 
     const pickerSelectStyles = {
@@ -229,14 +229,14 @@ const styles = StyleSheet.create({
     text: { fontSize: 16, color: "#333", paddingVertical: 10 },
 
     // Modal Styles
-    modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" },
-    modalContent: { width: "80%", backgroundColor: "#fff", padding: 20, borderRadius: 10, alignItems: "center" },
-    modalText: { fontSize: 18, fontWeight: "bold", marginBottom: 15, textAlign: "center" },
-    modalButtons: { flexDirection: "row", justifyContent: "space-between", width: "100%" },
-    modalButton: { flex: 1, padding: 10, alignItems: "center", borderRadius: 8, marginHorizontal: 5 },
-    cancelButton: { backgroundColor: "#757575" },
+    modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.4)" },
+    modalContent: { backgroundColor: "#fff", padding: 20, borderRadius: 10, width: "80%", alignItems: "center" },
+    modalText: { fontSize: 18, fontWeight: "bold", marginBottom: 20 },
+    modalButtons: { flexDirection: "row", justifyContent: "space-around", width: "100%" },
+    modalButton: { padding: 10, borderRadius: 8, width: 120 },
+    cancelButton: { backgroundColor: "#f1f1f1" },
     confirmButton: { backgroundColor: "#D32F2F" },
-    modalButtonText: { color: "white", fontWeight: "bold", fontSize: 16 },
+    modalButtonText: { fontSize: 16, color: "white", textAlign: "center" },
 });
 
 export default FarmTypeDetails;

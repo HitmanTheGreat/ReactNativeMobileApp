@@ -1,6 +1,6 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Import your reducers
 import userReducer from './slices/userSlice';
@@ -13,7 +13,7 @@ import userListReducer from './slices/usersSlice';
 // Persist Config
 const persistConfig = {
     key: 'root',
-    storage: storage,
+    storage: AsyncStorage,
     whitelist: ['user', 'farmTypes', 'crops', 'farmers', 'users'], // Persist these slices
 };
 

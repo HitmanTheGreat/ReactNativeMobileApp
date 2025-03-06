@@ -9,7 +9,7 @@ import { getRequest } from '@/constants/api';
 import { logout } from '@/store/slices/userSlice';
 import { useFocusEffect } from '@react-navigation/native';
 
-const UsersScreen = ({ navigation }) => {
+const UsersScreen = ({ navigation } : any) => {
 
     // Get token from userSlice in Redux store
     const token = useSelector((state: RootState) => state.user?.access); // Adjust the path based on your Redux state structure

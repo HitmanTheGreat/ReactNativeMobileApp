@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "my-app",
-    "slug": "my-app",
+    "name": "FarmLand",
+    "slug": "my-app",  // Update this to match the expected slug
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

@@ -8,14 +8,18 @@ import { fetchFarmTypes, createFarmType, updateFarmType, deleteFarmType, FarmTyp
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 
-const FarmTypeScreen = ({ navigation }) => {
+interface FarmTypeScreenProps {
+    navigation: any; // Replace `any` with the proper type if you have defined a custom navigation type
+}
+
+const FarmTypeScreen: React.FC<FarmTypeScreenProps> = ({ navigation }) => {
     const router = useRouter();
     const dispatch = useDispatch();
     const token = useSelector((state: RootState) => state.user?.access);
     const isConnected = useSelector((state: RootState) => state.network.isConnected);
     const farmTypes = useSelector((state: RootState) => state.farmType.data);
     const fetchStatus = useSelector((state: RootState) => state.farmType.status);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState<string>('');
 
     useEffect(() => {
         if (token) {

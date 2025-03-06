@@ -36,7 +36,7 @@ const DashboardScreen = () => {
             <Stack.Screen name="FarmerAdd" component={FarmerAddScreen} /> */}
             {/* FarmType */}
             <Stack.Screen name="FarmType" component={FarmTypesScreen} />
-            <Stack.Screen name="FarmTypeDetails" component={FarmTypeDetails} />
+            {/* <Stack.Screen name="FarmTypeDetails" component={FarmTypeDetails} /> */}
             <Stack.Screen name="FarmTypeAdd" component={FarmTypeAdd} />
 
         </Stack.Navigator>

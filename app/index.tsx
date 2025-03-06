@@ -14,7 +14,10 @@ export default function LandingScreen() {
             </Animated.View>
 
             <Animated.View entering={FadeInDown.duration(1200)} style={styles.content}>
-                <Text style={styles.title}>Welcome to AgriConnect</Text>
+                <Text style={styles.title}>
+                    <Text style={styles.farm}>Farm</Text>
+                    <Text style={styles.land}>Land</Text>
+                </Text>
                 <Text style={styles.subtitle}>Empowering Farmers with Smart Solutions</Text>
             </Animated.View>
 
@@ -47,6 +50,12 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         color: '#fff',
+    },
+    farm: {
+        color: '#DAA520',
+    },
+    land: {
+        color: 'gold',
     },
     subtitle: {
         fontSize: 16,
