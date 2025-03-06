@@ -58,3 +58,14 @@ npm install @react-navigation/stack
 npm install react-native-svg victory-native
 
 # ReactNativeMobileApp
+eas build --platform android --profile apk
+eas build --profile development --platform android
+
+./gradlew --stop
+./gradlew clean
+./gradlew build
+
+
+
+npx expo prebuild
+cd android && ./gradlew clean

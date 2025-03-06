@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';  // Make sure to have axios installed
 import { RootState } from '@/store/store';
-import { patchRequest } from '@/constants/api';
+import { patchRequest, putRequest } from '@/constants/api';
 
 const ProfileScreen = () => {
     const user = useSelector((state: RootState) => state.user.user);  // Assuming user is stored in the Redux store
@@ -110,7 +110,7 @@ const ProfileScreen = () => {
                         </View>
                     </View>
 
-                    {Object.keys(profile)
+                    {profile && Object.keys(profile) // Check if profile is not null or undefined
                         .filter((key) => !['id', 'is_staff', 'role', 'username'].includes(key)) // Skip id and is_staff
                         .map((key, index) => (
                             <Animated.View key={key} entering={FadeInUp.delay(200 * index).duration(600)} style={styles.inputContainer}>
@@ -130,6 +130,7 @@ const ProfileScreen = () => {
                                 )}
                             </Animated.View>
                         ))}
+
 
 
 
