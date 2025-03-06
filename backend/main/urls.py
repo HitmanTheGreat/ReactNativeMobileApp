@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import FarmTypeViewSet, CropViewSet, FarmerViewSet, UserViewSet , LogoutView ,current_user , CustomTokenObtainPairView , ChangePasswordView
+from .views import FarmTypeViewSet, CropViewSet, FarmerViewSet, UserViewSet , LogoutView ,current_user , CustomTokenObtainPairView , ChangePasswordView ,landing_page
 
 router = DefaultRouter()
 router.register(r'farm-types', FarmTypeViewSet)
@@ -14,4 +14,5 @@ urlpatterns = [
     path('api/current-user/', current_user, name='current_user'),
     path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/change-password/', ChangePasswordView.as_view(), name='change-password'),
+    path('', landing_page, name='landing_page'),
 ]

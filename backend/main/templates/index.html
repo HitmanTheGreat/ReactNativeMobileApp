@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Landing Screen</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: sans-serif;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        background: linear-gradient(135deg, #74c369, #2d732e);
+      }
+      .logo {
+        width: 150px;
+        height: 150px;
+        margin-bottom: 20px;
+        opacity: 0;
+        animation: fadeInUp 1s forwards;
+      }
+      .content {
+        text-align: center;
+        margin-bottom: 30px;
+        opacity: 0;
+        animation: fadeInDown 1.2s forwards;
+        animation-delay: 0.5s;
+      }
+      .title {
+        font-size: 28px;
+        font-weight: bold;
+        color: #fff;
+      }
+      .farm {
+        color: #daa520;
+      }
+      .land {
+        color: gold;
+      }
+      .subtitle {
+        font-size: 16px;
+        color: #fff;
+        margin-top: 8px;
+        padding: 0 20px;
+      }
+      .button-container {
+        width: 80%;
+        text-align: center;
+        opacity: 0;
+        animation: fadeInDown 1.4s forwards;
+        animation-delay: 0.7s;
+      }
+      .button {
+        background-color: #ffd700;
+        padding: 12px 40px;
+        border: none;
+        border-radius: 25px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #2d732e;
+        cursor: pointer;
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img class="logo" src="/static/img/logo.png" alt="Farm Logo" />
+      <div class="content">
+        <div class="title">
+          <span class="farm">Farm</span><span class="land">Land</span>
+        </div>
+        <div class="subtitle">Empowering Farmers with Smart Solutions</div>
+      </div>
+      <div class="button-container">
+        <a class="button" href="/static/app/FarmLand.apk" download>Download FarmLand App</a>
+    </div>
+    </div>
+  </body>
+</html>
