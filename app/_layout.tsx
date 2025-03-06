@@ -9,6 +9,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { persistor, store } from '@/store/store';
 import { FC } from 'react';
+import { Text } from 'react-native';
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -16,7 +17,7 @@ SplashScreen.preventAutoHideAsync();
 // Type for your loading screen component
 const LoadingScreen: FC = () => {
   return (
-    <div>Loading...</div> // Customize this with a proper loading component
+    <Text>Loading...</Text> // Customize this with a proper loading component
   );
 };
 
