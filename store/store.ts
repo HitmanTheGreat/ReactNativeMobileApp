@@ -1,18 +1,30 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import storage from 'redux-persist/lib/storage';
+
+// Import your reducers
 import userReducer from './slices/userSlice';
+import networkReducer from './slices/networkSlice';
+import farmTypeReducer from './slices/farmTypeSlice';
+import cropReducer from './slices/cropSlice';
+import farmerReducer from './slices/farmerSlice';
+import userListReducer from './slices/usersSlice';
 
 // Persist Config
 const persistConfig = {
     key: 'root',
-    storage: AsyncStorage, // Use AsyncStorage for persistence
-    whitelist: ['user'], // Only persist the user state
+    storage: storage,
+    whitelist: ['user', 'farmTypes', 'crops', 'farmers', 'users'], // Persist these slices
 };
 
-// Root Reducer
+// Root Reducer combining all slices
 const rootReducer = combineReducers({
-    user: persistReducer(persistConfig, userReducer), // Apply persistReducer to user reducer
+    user: persistReducer(persistConfig, userReducer),
+    network: networkReducer,
+    farmType: persistReducer(persistConfig, farmTypeReducer),
+    crops: persistReducer(persistConfig, cropReducer),
+    farmer: persistReducer(persistConfig, farmerReducer),
+    users: persistReducer(persistConfig, userListReducer),
 });
 
 // Store Configuration

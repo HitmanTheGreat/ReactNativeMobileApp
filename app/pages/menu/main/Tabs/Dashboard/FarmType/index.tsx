@@ -1,66 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { FlatList, View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Feather';
 import { RootState } from '@/store/store';
-import { getRequest } from '@/constants/api';
-import { logout } from '@/store/slices/userSlice';
+import { fetchFarmTypes, createFarmType, updateFarmType, deleteFarmType, FarmType } from '@/store/thunks/farmTypeThunk';
 import { useFocusEffect } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 
 const FarmTypeScreen = ({ navigation }) => {
-    // Get token from userSlice in Redux store
-    const token = useSelector((state: RootState) => state.user?.access); // Adjust the path based on your Redux state structure
     const router = useRouter();
     const dispatch = useDispatch();
+    const token = useSelector((state: RootState) => state.user?.access);
+    const isConnected = useSelector((state: RootState) => state.network.isConnected);
+    const farmTypes = useSelector((state: RootState) => state.farmType.data);
+    const fetchStatus = useSelector((state: RootState) => state.farmType.status);
     const [searchQuery, setSearchQuery] = useState('');
-    const [farmTypes, setFarmTypes] = useState<any[]>([]);
 
     useEffect(() => {
-        // Reset search query when component mounts
-        setSearchQuery('');
-
-        // Fetch farm types when token is available
         if (token) {
-            getRequest('/farm-types/', {}, token)
-                .then(response => {
-                    // Assuming response is an array of farm types
-                    setFarmTypes(response);
-                })
-                .catch(error => {
-                    console.error(error);
-                    Alert.alert('Error', 'Unable to fetch farm types.');
-                });
+            dispatch(fetchFarmTypes());
         } else {
-            dispatch(logout());
             router.push('/pages/login');
             Alert.alert('Error', 'No authentication token available.');
         }
-    }, []);
-
-    useFocusEffect(
-        React.useCallback(() => {
-            if (token) {
-                getRequest('/farm-types/', {}, token)
-                    .then(response => {
-                        // Assuming response is an array of farm types
-                        setFarmTypes(response);
-                    })
-                    .catch(error => {
-                        console.error(error);
-                        Alert.alert('Error', 'Unable to fetch farm types.');
-                    });
-            } else {
-                dispatch(logout());
-                router.push('/pages/login');
-                Alert.alert('Error', 'No authentication token available.');
-            }
-        }, [token])
-    );
+    }, [token, dispatch]);
 
     const filteredFarmTypes = farmTypes.filter(farmType =>
         farmType.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const renderFarmType = ({ item }: { item: FarmType }) => (
+        <Swipeable renderRightActions={() => renderRightActions(item.id)}>
+            <TouchableOpacity onPress={() => navigation.navigate('FarmTypeDetails', { farmTypeId: item.id })}>
+                <View style={styles.farmTypeCard}>
+                    <Text style={styles.farmTypeName}>{item.name}</Text>
+                    <Text style={styles.farmTypeDescription}>{item.description}</Text>
+                </View>
+            </TouchableOpacity>
+        </Swipeable>
     );
 
     const renderRightActions = (id: number) => (
@@ -75,32 +53,14 @@ const FarmTypeScreen = ({ navigation }) => {
     );
 
     const handleDelete = (id: number) => {
-        // Handle the delete action
         Alert.alert('Delete', `Are you sure you want to delete farm type with ID ${id}?`, [
             { text: 'Cancel' },
-            {
-                text: 'Delete', onPress: () => {
-                    // Delete logic here
-                    console.log(`Farm type ${id} deleted.`);
-                }
-            }
+            { text: 'Delete', onPress: () => dispatch(deleteFarmType(id)) }
         ]);
     };
 
-    const renderFarmType = ({ item }: { item: any }) => (
-        <Swipeable renderRightActions={() => renderRightActions(item.id)}>
-            <TouchableOpacity onPress={() => navigation.navigate('FarmTypeDetails', { farmTypeId: item.id })}>
-                <View style={styles.farmTypeCard}>
-                    <Text style={styles.farmTypeName}>{item.name}</Text>
-                    <Text style={styles.farmTypeDescription}>{item.description}</Text>
-                </View>
-            </TouchableOpacity>
-        </Swipeable>
-    );
-
     return (
         <View style={styles.container}>
-            {/* Search Bar */}
             <View style={styles.searchContainer}>
                 <Icon name="search" size={20} color="#aaa" style={styles.icon} />
                 <TextInput
@@ -110,10 +70,7 @@ const FarmTypeScreen = ({ navigation }) => {
                     onChangeText={setSearchQuery}
                 />
             </View>
-
             <View style={styles.spacer} />
-
-            {/* Farm Type List */}
             {filteredFarmTypes.length === 0 ? (
                 <View style={styles.noItemsContainer}>
                     <Text style={styles.noItemsText}>No farm types to show</Text>
@@ -125,8 +82,6 @@ const FarmTypeScreen = ({ navigation }) => {
                     renderItem={renderFarmType}
                 />
             )}
-
-            {/* Add Farm Type Button */}
             <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('FarmTypeAdd')}>
                 <Icon name="plus-circle" size={24} color="#fff" />
             </TouchableOpacity>
@@ -184,10 +139,6 @@ const styles = StyleSheet.create({
         borderRadius: 28,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        shadowOffset: { width: 0, height: 2 },
     },
     searchContainer: {
         flexDirection: 'row',
@@ -208,7 +159,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     spacer: {
-        height: 30, // Adjust this value for more or less space
+        height: 30,
     },
     noItemsContainer: {
         flex: 1,

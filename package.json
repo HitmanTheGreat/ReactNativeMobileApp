@@ -17,6 +17,7 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@react-native-async-storage/async-storage": "^2.1.2",
+    "@react-native-community/netinfo": "^11.4.1",
     "@react-navigation/bottom-tabs": "^7.2.1",
     "@react-navigation/drawer": "^7.1.2",
     "@react-navigation/native": "^7.0.15",
@@ -27,6 +28,7 @@
     "expo": "~52.0.37",
     "expo-blur": "~14.0.3",
     "expo-constants": "~17.0.7",
+    "expo-dev-client": "~5.0.12",
     "expo-file-system": "^18.0.11",
     "expo-font": "~13.0.4",
     "expo-haptics": "~14.0.1",
@@ -57,9 +59,9 @@
     "react-native-webview": "13.12.5",
     "react-redux": "^9.2.0",
     "realm": "^20.1.0",
+    "redux-offline": "^2.0.0",
     "redux-persist": "^6.0.0",
-    "victory-native": "^41.16.1",
-    "expo-dev-client": "~5.0.12"
+    "victory-native": "^41.16.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

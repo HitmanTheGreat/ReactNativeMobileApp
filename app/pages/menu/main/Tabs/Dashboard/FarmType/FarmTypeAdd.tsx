@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Picker } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
 import { postRequest } from '@/constants/api';
-import { ScrollView } from 'react-native-gesture-handler';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootState } from '@/store/store';
 
-const FarmTypeAdd = () => {
-    const [farmTypeData, setFarmTypeData] = useState({
+interface FarmTypeData {
+    name: string;
+    description: string;
+}
+
+const FarmTypeAdd: React.FC = () => {
+    const [farmTypeData, setFarmTypeData] = useState<FarmTypeData>({
         name: '',
         description: '',
     });
-    const [loading, setLoading] = useState(false);
-    const token = useSelector((state) => state.user.access);
+    const [loading, setLoading] = useState<boolean>(false);
+    const token = useSelector((state: RootState) => state.user.access) as string | null;
 
     // Handle input changes
-    const handleChange = (field, value) => {
-        setFarmTypeData({ ...farmTypeData, [field]: value });
+    const handleChange = (field: keyof FarmTypeData, value: string) => {
+        setFarmTypeData((prevState) => ({ ...prevState, [field]: value }));
     };
 
     // Handle form submission
@@ -38,7 +44,7 @@ const FarmTypeAdd = () => {
             formData.append('description', farmTypeData.description);
 
             // Submit data
-            const result = await postRequest('/farm-types/', formData, token, true);
+            const result = await postRequest('/farm-types/', formData, token);
 
             if (result) {
                 Toast.show({
@@ -54,14 +60,14 @@ const FarmTypeAdd = () => {
                 Toast.show({
                     type: 'error',
                     text1: 'Error!',
-                    text2: result.message || 'Failed to add Farm Type.',
+                    text2: result?.message || 'Failed to add Farm Type.',
                 });
             }
-        } catch (error) {
+        } catch (error: any) {
             Toast.show({
                 type: 'error',
                 text1: 'Error!',
-                text2: error.message,
+                text2: error.message || 'An error occurred.',
             });
         } finally {
             setLoading(false);

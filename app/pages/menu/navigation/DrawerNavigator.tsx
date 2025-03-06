@@ -10,7 +10,6 @@ import BottomTabs from './BottomTabs';
 import { Divider } from 'react-native-paper';
 import UsersScreen from '../main/Tabs/Dashboard/User';
 import UserDetailsScreen from '../main/Tabs/Dashboard/User/UserDetails';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '@/store/slices/userSlice';
 import { router, useRouter } from 'expo-router';
@@ -36,8 +35,6 @@ const CustomDrawerContent = ({ navigation }: { navigation: any }) => {
 
         try {
             // Clear AsyncStorage
-            await AsyncStorage.clear();
-
             // Dispatch Redux logout action
             dispatch(logout());
 

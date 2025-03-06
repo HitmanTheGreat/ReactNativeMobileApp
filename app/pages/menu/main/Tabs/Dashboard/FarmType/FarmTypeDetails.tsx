@@ -8,22 +8,42 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import Toast from 'react-native-toast-message';
 import RNPickerSelect from 'react-native-picker-select'; // Picker for dropdown selection
+import AsyncStorage from '@react-native-async-storage/async-storage'; // For offline storage
 
-const FarmTypeDetails = ({ route }) => {
+// Define types for the farmer data and props
+interface FarmerData {
+    [key: string]: string | number;
+}
+
+interface FarmTypeDetailsProps {
+    route: {
+        params: {
+            farmTypeId: string;
+        };
+    };
+}
+
+const FarmTypeDetails: React.FC<FarmTypeDetailsProps> = ({ route }) => {
     const { farmTypeId } = route.params;  // Extract farmTypeId from navigation params
-    const [farmerData, setFarmerData] = useState(null);
-    const [isEditing, setIsEditing] = useState(false);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);  // State to handle loading spinner
+    const [farmerData, setFarmerData] = useState<FarmerData | null>(null);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);  // State to handle loading spinner
+    const [offlineData, setOfflineData] = useState<FarmerData | null>(null); // State for offline edits
     const navigation = useNavigation();
     const token = useSelector((state: RootState) => state.user.access); // Retrieve token from Redux
 
     useEffect(() => {
-        // Function to fetch farmer data on mount
+        // Function to fetch farmer data on mount (tries to load from AsyncStorage if offline)
         const fetchFarmerData = async () => {
             try {
-                const response = await getRequest(`/farm-types/${farmTypeId}/`, {}, token);
-                setFarmerData(response);  // Set the fetched data
+                const storedData = await AsyncStorage.getItem(`farmerData_${farmTypeId}`);
+                if (storedData) {
+                    setFarmerData(JSON.parse(storedData));  // Set data from AsyncStorage if available
+                } else {
+                    const response = await getRequest(`/farm-types/${farmTypeId}/`, {}, token);
+                    setFarmerData(response);  // Set fetched data from server
+                }
             } catch (error) {
                 console.error('Error fetching farmer data:', error);
             } finally {
@@ -55,15 +75,25 @@ const FarmTypeDetails = ({ route }) => {
 
     const handleSave = async () => {
         try {
-            await putRequest(`/farm-types/${farmTypeId}/`, farmerData, token);  // Send PUT request to save data
-            setIsEditing(false);  // Disable edit mode after saving
-
-            // Show success toast message
-            Toast.show({
-                type: 'success',
-                text1: 'Success!',
-                text2: 'Farmer data has been saved successfully.',
-            });
+            if (token) {
+                // If online, sync data with the server
+                await putRequest(`/farm-types/${farmTypeId}/`, farmerData, token);  // Send PUT request to save data
+                setIsEditing(false);  // Disable edit mode after saving
+                Toast.show({
+                    type: 'success',
+                    text1: 'Success!',
+                    text2: 'Farmer data has been saved successfully.',
+                });
+            } else {
+                // If offline, store locally in AsyncStorage
+                await AsyncStorage.setItem(`farmerData_${farmTypeId}`, JSON.stringify(farmerData));
+                Toast.show({
+                    type: 'info',
+                    text1: 'Offline Mode',
+                    text2: 'Changes have been saved locally and will be synced when online.',
+                });
+                setIsEditing(false);
+            }
         } catch (error) {
             console.error('Error saving farmer data:', error);
             Toast.show({
@@ -74,8 +104,8 @@ const FarmTypeDetails = ({ route }) => {
         }
     };
 
-    const handleChange = (key, value) => {
-        setFarmerData(prevData => ({ ...prevData, [key]: value }));
+    const handleChange = (key: string, value: string) => {
+        setFarmerData((prevData) => ({ ...prevData, [key]: value }));
     };
 
     const pickerSelectStyles = {
@@ -126,7 +156,7 @@ const FarmTypeDetails = ({ route }) => {
                 </View>
 
                 {/* Display Farmer Details */}
-                {Object.keys(farmerData)
+                {Object.keys(farmerData || {})
                     .filter(key => !['id', 'createdAt', 'updatedAt'].includes(key)) // Skip unnecessary fields
                     .map((key, index) => (
                         <Animated.View key={key} entering={FadeInUp.delay(200 * index).duration(600)} style={styles.inputContainer}>
@@ -137,7 +167,7 @@ const FarmTypeDetails = ({ route }) => {
                                 isEditing ? (
                                     <RNPickerSelect
                                         style={pickerSelectStyles}
-                                        value={farmerData[key]}
+                                        value={farmerData[key] as string}
                                         onValueChange={(value) => handleChange('farmerType', value)}
                                         items={[
                                             { label: 'Small Scale', value: 'small_scale' },
@@ -151,7 +181,7 @@ const FarmTypeDetails = ({ route }) => {
                                 isEditing ? (
                                     <TextInput
                                         style={styles.input}
-                                        value={farmerData[key]}
+                                        value={farmerData[key] as string}
                                         onChangeText={(text) => handleChange(key, text)}
                                     />
                                 ) : (

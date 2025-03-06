@@ -7,24 +7,46 @@ import Toast from 'react-native-toast-message';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '@/store/slices/userSlice';
 import { AppDispatch, RootState } from '@/store/store';
-import { postRequest } from '@/constants/api';  // Import postRequest from your API utilities
+import { postRequest } from '@/constants/api'; // Import postRequest from your API utilities
+
+interface LoginResponse {
+  access: string;
+  refresh: string;
+  user: {
+    id: number;
+    username: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    isStaff: boolean;
+    role: string;
+  };
+}
 
 export default function LoginScreen() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const user = useSelector((state: RootState) => state.user.user);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(true);
+  const token = useSelector((state: RootState) => state.user?.access);
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
+  const [mounted, setMounted] = useState<boolean>(false); // Track mount state
 
-  // Check if user is already logged in
+  // Set mounted to true once the component is mounted
   useEffect(() => {
-    if (user) {
-      router.replace('/pages/menu'); // Redirect to menu if logged in
-    } else {
-      setLoading(false);
+    setMounted(true);
+  }, []);
+
+  // Handle navigation only after the component is mounted
+  useEffect(() => {
+    if (mounted) {
+      if (token) {
+        router.push('/pages/menu'); // Redirect to menu if logged in
+      } else {
+        setLoading(false); // Stop loading if not logged in
+      }
     }
-  }, [user]);
+  }, [token, mounted, router]);
 
   // Function to handle login API request
   const handleLogin = async () => {
@@ -40,7 +62,7 @@ export default function LoginScreen() {
     setLoading(true); // Show loading spinner
 
     try {
-      const response = await postRequest('/token/', { username, password }, null);
+      const response: LoginResponse = await postRequest('/token/', { username, password }, null);
 
       // Handle successful login
       const user = { access: response.access, refresh: response.refresh, user: response.user };
@@ -80,8 +102,7 @@ export default function LoginScreen() {
           text2: errorMessage,
           position: 'top',
         });
-    }, 1000);
-     
+      }, 1000);
     } finally {
       setLoading(false); // Hide loading spinner
     }
@@ -111,7 +132,7 @@ export default function LoginScreen() {
           placeholderTextColor="#999"
           value={username}
           onChangeText={setUsername}
-          keyboardType="username-address"
+          keyboardType="email-address"
           autoCapitalize="none"
         />
 
@@ -124,14 +145,11 @@ export default function LoginScreen() {
           secureTextEntry
         />
 
-
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
         <Toast />
-
       </Animated.View>
-
     </LinearGradient>
   );
 }
@@ -186,14 +204,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     color: '#333',
   },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: 15,
-  },
-  forgotPasswordText: {
-    color: '#2D732E',
-    fontSize: 14,
-  },
   button: {
     backgroundColor: '#FFD700',
     paddingVertical: 15,
@@ -206,10 +216,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#2D732E',
-  },
-  registerText: {
-    color: '#2D732E',
-    textAlign: 'center',
-    marginTop: 10,
   },
 });

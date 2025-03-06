@@ -24,7 +24,7 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
-    return null;
+    return <LoadingScreen />; // Add a loading screen here while fonts load
   }
 
   return (
@@ -35,7 +35,7 @@ export default function RootLayout() {
             <Stack.Screen name="pages" />
             <Stack.Screen name="+not-found" />
           </Stack>
-          <StatusBar style="auto" />
+          <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} /> {/* Adjust status bar style */}
         </ThemeProvider>
       </PersistGate>
     </Provider>
