@@ -1,18 +1,22 @@
 import React from 'react';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { LinearGradient } from 'expo-linear-gradient';
 import TabsScreen from '@/components/ui/TabsScreen';
 import CropsScreen from '../screens/Crop';
 import FarmerScreen from '../screens/Farmer';
 import FarmTypeScreen from '../screens/FarmType';
 import UserScreen from '../screens/User';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
+import CustomeIconSymbol from '@/components/ui/CustomeIconSymbol';
+import { HelloWave } from '@/components/HelloWave';
 
-// Create a Drawer Navigator
 const Drawer = createDrawerNavigator();
 
 const CustomDrawerContent = (props) => {
   const { navigation } = props;
+  const user = useSelector((state: RootState) => state.user?.user);
 
   const handleLogout = () => {
     console.log("Logging out...");
@@ -20,32 +24,39 @@ const CustomDrawerContent = (props) => {
   };
 
   return (
-    <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContainer}>
-      {/* Header Section */}
-      <View style={styles.headerSection}>
-        <Image source={require('@/assets/images/farm-logo.png')} style={styles.profileImage} />
-        <Text style={styles.profileName}>John Doe</Text>
-        <Text style={styles.profileEmail}>johndoe@email.com</Text>
-      </View>
+    <LinearGradient colors={['#74C369', '#2D732E']} style={styles.gradientBackground}>
+      <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContainer}>
 
-      {/* Drawer Items */}
-      <DrawerItemList {...props} />
+        {/* Profile Header */}
+        <View style={styles.profileContainer}>
+          <View style={styles.headerSection}>
+            <Image source={require('@/assets/images/farm-logo.png')} style={styles.profileImage} />
+          </View>
+          <Text style={styles.profileName}>Hello : {user.username.toUpperCase()}  <HelloWave /> </Text>
+        </View>
 
-      {/* Logout Button */}
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <IconSymbol size={24} name="logout" color="#FFD700" />
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
-    </DrawerContentScrollView>
+
+        {/* Drawer Items */}
+        <DrawerItemList {...props} />
+
+        {/* Logout Button */}
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <CustomeIconSymbol size={24} name="logout" color="#FFD700" />
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
+      </DrawerContentScrollView>
+    </LinearGradient>
   );
 };
 
 export default function TabLayout() {
   return (
-    <Drawer.Navigator 
-      drawerContent={(props) => <CustomDrawerContent {...props} />} 
+    <Drawer.Navigator
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         headerShown: true,
+        headerStyle: { backgroundColor: '#2D732E' }, // Green top bar
+        headerTintColor: '#FFF', // White text/icons in the header
         drawerStyle: styles.drawerStyle,
         drawerActiveTintColor: "#FFD700",
         drawerInactiveTintColor: "#FFF",
@@ -57,7 +68,13 @@ export default function TabLayout() {
         component={TabsScreen}
         options={{
           title: 'Home',
-          drawerIcon: ({ color }) => <IconSymbol size={24} name="home" color={color} />,
+          drawerLabel: ({ color }) => (
+            <View style={styles.drawerItem}>
+              <CustomeIconSymbol size={20} name="home" color={color} />
+              <Text style={[styles.drawerText, { color }]}>Home</Text>
+            </View>
+          ),
+          drawerIcon: () => null, // Hide default icon
         }}
       />
       <Drawer.Screen
@@ -65,49 +82,79 @@ export default function TabLayout() {
         component={CropsScreen}
         options={{
           title: 'Crops',
-          drawerIcon: ({ color }) => <IconSymbol size={24} name="seedling" color={color} />,
+          drawerLabel: ({ color }) => (
+            <View style={styles.drawerItem}>
+              <CustomeIconSymbol size={20} name="grass" color={color} />
+              <Text style={[styles.drawerText, { color }]}>Crops</Text>
+            </View>
+          ),
+          drawerIcon: () => null, // Hide default icon
         }}
       />
+
       <Drawer.Screen
         name="Farmer"
         component={FarmerScreen}
         options={{
           title: 'Farmer',
-          drawerIcon: ({ color }) => <IconSymbol size={24} name="person.fill" color={color} />,
+          drawerLabel: ({ color }) => (
+            <View style={styles.drawerItem}>
+              <CustomeIconSymbol size={20} name="person" color={color} />
+              <Text style={[styles.drawerText, { color }]}>Farmer</Text>
+            </View>
+          ),
+          drawerIcon: () => null,
         }}
       />
+
       <Drawer.Screen
         name="FarmType"
         component={FarmTypeScreen}
         options={{
           title: 'Farm Type',
-          drawerIcon: ({ color }) => <IconSymbol size={24} name="tree" color={color} />,
+          drawerLabel: ({ color }) => (
+            <View style={styles.drawerItem}>
+              <CustomeIconSymbol size={20} name="nature" color={color} />
+              <Text style={[styles.drawerText, { color }]}>Farm Type</Text>
+            </View>
+          ),
+          drawerIcon: () => null,
         }}
       />
+
       <Drawer.Screen
         name="User"
         component={UserScreen}
         options={{
           title: 'Users',
-          drawerIcon: ({ color }) => <IconSymbol size={24} name="users" color={color} />,
+          drawerLabel: ({ color }) => (
+            <View style={styles.drawerItem}>
+              <CustomeIconSymbol size={20} name="group" color={color} />
+              <Text style={[styles.drawerText, { color }]}>Users</Text>
+            </View>
+          ),
+          drawerIcon: () => null,
         }}
       />
     </Drawer.Navigator>
   );
 }
 
+
 // Styles
 const styles = StyleSheet.create({
+  gradientBackground: {
+    flex: 1,
+  },
   drawerContainer: {
     flex: 1,
-    backgroundColor: '#2C3E50',
     paddingTop: 20,
   },
   headerSection: {
     alignItems: 'center',
     marginBottom: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#FFD700',
+    borderBottomColor: '#2D732E',
     paddingBottom: 15,
   },
   profileImage: {
@@ -119,14 +166,10 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFD700',
-  },
-  profileEmail: {
-    fontSize: 14,
-    color: '#EAEAEA',
+    color: '#2D732E',
+    textAlign: 'center'
   },
   drawerStyle: {
-    backgroundColor: '#34495E',
     width: 260,
   },
   drawerLabel: {
@@ -149,5 +192,26 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#FFD700',
+  },
+  profileContainer: {
+    backgroundColor: '#FFF', // White background for the paper effect
+    padding: 15,
+    marginBottom: 20,
+    marginHorizontal: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5, // Adds shadow for Android
+  },
+  drawerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  drawerText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 10, // Space between icon and text
   },
 });
