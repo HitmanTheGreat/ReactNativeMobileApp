@@ -5,9 +5,9 @@ import TabsScreen from '@/components/ui/TabsScreen';
 import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient from Expo (or react-native-linear-gradient)
 import { StyleSheet } from 'react-native';
 import CropsScreen from '../screens/Crop';
-import FarmTypeScreen from '../screens/FarmType'; // Import the FarmType screen
-import FarmerScreen from '../screens/Farmer'; // Import the Farmer screen
-import UserScreen from '../screens/User'; // Import the User screen
+import FarmerScreen from '../screens/Farmer'; // Import Farmer Screen
+import FarmTypeScreen from '../screens/FarmType'; // Import Farm Type Screen
+import UserScreen from '../screens/User'; // Import User Screen
 
 // Create a Drawer Navigator
 const Drawer = createDrawerNavigator();
@@ -31,43 +31,46 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Drawer Screens for Additional Sections */}
-      <Drawer.Screen
-        name="Farmer"
-        component={FarmerScreen} // Replace with your actual Farmer screen
-        options={{
-          title: 'Farmer',
-          drawerIcon: ({ color }) => <IconSymbol size={24} name="user" color={color} />,
-        }}
-      />
-
+      {/* Drawer Screen for Crops */}
       <Drawer.Screen
         name="Crops"
-        component={CropsScreen} // Replace with your actual Crops screen
+        component={CropsScreen}
         options={{
           title: 'Crops',
           drawerIcon: ({ color }) => <IconSymbol size={24} name="seedling" color={color} />,
         }}
       />
 
+      {/* Drawer Screen for Farmer */}
+      <Drawer.Screen
+        name="Farmer"
+        component={FarmerScreen}
+        options={{
+          title: 'Farmer',
+          drawerIcon: ({ color }) => <IconSymbol size={24} name="person.fill" color={color} />,
+        }}
+      />
+
+      {/* Drawer Screen for FarmType */}
       <Drawer.Screen
         name="FarmType"
-        component={FarmTypeScreen} // Replace with your actual FarmType screen
+        component={FarmTypeScreen}
         options={{
-          title: 'Farm Types',
+          title: 'Farm Type',
           drawerIcon: ({ color }) => <IconSymbol size={24} name="tree" color={color} />,
         }}
       />
 
+      {/* Drawer Screen for User */}
       <Drawer.Screen
         name="User"
-        component={UserScreen} // Replace with your actual User screen
+        component={UserScreen}
         options={{
           title: 'Users',
           drawerIcon: ({ color }) => <IconSymbol size={24} name="users" color={color} />,
         }}
       />
-      
+
     </Drawer.Navigator>
   );
 }
