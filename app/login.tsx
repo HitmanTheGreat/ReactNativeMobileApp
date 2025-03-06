@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUser } from '@/store/slices/userSlice';
@@ -31,6 +31,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [mounted, setMounted] = useState<boolean>(false); // Track mount state
+  const navigation = useNavigation()
 
   // Set mounted to true once the component is mounted
   useEffect(() => {
@@ -41,7 +42,7 @@ export default function LoginScreen() {
   useEffect(() => {
     if (mounted) {
       if (token) {
-        router.push('/pages/menu'); // Redirect to menu if logged in
+        router.push('/(tabs)/home'); // Redirect to menu if logged in
       } else {
         setLoading(false); // Stop loading if not logged in
       }
@@ -71,7 +72,8 @@ export default function LoginScreen() {
       dispatch(setUser(user));
 
       // Navigate to the menu screen
-      router.replace('/pages/menu');
+      navigation.navigate('home');
+
     } catch (error : any) {
       console.error('Login failed', error);
 

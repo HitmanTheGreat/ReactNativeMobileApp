@@ -45,7 +45,7 @@ const RootLayout: FC = () => {
       <PersistGate loading={null} persistor={persistor}>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="pages" />
+            <Stack.Screen name="(tabs)" />
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />

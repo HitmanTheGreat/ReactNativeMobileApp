@@ -22,7 +22,7 @@ export default function LandingScreen() {
             </Animated.View>
 
             <Animated.View entering={FadeInDown.duration(1400)} style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => router.push('/pages/login')}>
+                <TouchableOpacity style={styles.button} onPress={() => router.push('/login')}>
                     <Text style={styles.buttonText}>Get Started</Text>
                 </TouchableOpacity>
             </Animated.View>
