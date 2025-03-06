@@ -1,37 +1,65 @@
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { createStackNavigator } from '@react-navigation/stack'; // Add Stack Navigator
+import React from 'react';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabsScreen from '@/components/ui/TabsScreen';
-import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient from Expo (or react-native-linear-gradient)
-import { StyleSheet } from 'react-native';
 import CropsScreen from '../screens/Crop';
-import FarmerScreen from '../screens/Farmer'; // Import Farmer Screen
-import FarmTypeScreen from '../screens/FarmType'; // Import Farm Type Screen
-import UserScreen from '../screens/User'; // Import User Screen
+import FarmerScreen from '../screens/Farmer';
+import FarmTypeScreen from '../screens/FarmType';
+import UserScreen from '../screens/User';
 
 // Create a Drawer Navigator
 const Drawer = createDrawerNavigator();
 
-// Create a Stack Navigator for Tab Navigation
-const Stack = createStackNavigator();
+const CustomDrawerContent = (props) => {
+  const { navigation } = props;
+
+  const handleLogout = () => {
+    console.log("Logging out...");
+    navigation.replace('Login');
+  };
+
+  return (
+    <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContainer}>
+      {/* Header Section */}
+      <View style={styles.headerSection}>
+        <Image source={require('@/assets/images/farm-logo.png')} style={styles.profileImage} />
+        <Text style={styles.profileName}>John Doe</Text>
+        <Text style={styles.profileEmail}>johndoe@email.com</Text>
+      </View>
+
+      {/* Drawer Items */}
+      <DrawerItemList {...props} />
+
+      {/* Logout Button */}
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <IconSymbol size={24} name="logout" color="#FFD700" />
+        <Text style={styles.logoutText}>Logout</Text>
+      </TouchableOpacity>
+    </DrawerContentScrollView>
+  );
+};
 
 export default function TabLayout() {
   return (
-    <Drawer.Navigator
+    <Drawer.Navigator 
+      drawerContent={(props) => <CustomDrawerContent {...props} />} 
       screenOptions={{
-        headerShown: true, // Show the header
-      }}>
-      {/* Drawer Screen for Tabs (Stack Navigator here) */}
+        headerShown: true,
+        drawerStyle: styles.drawerStyle,
+        drawerActiveTintColor: "#FFD700",
+        drawerInactiveTintColor: "#FFF",
+        drawerLabelStyle: styles.drawerLabel,
+      }}
+    >
       <Drawer.Screen
         name="Home"
-        component={TabsScreen} // This component will contain the Tabs navigation
+        component={TabsScreen}
         options={{
           title: 'Home',
           drawerIcon: ({ color }) => <IconSymbol size={24} name="home" color={color} />,
         }}
       />
-
-      {/* Drawer Screen for Crops */}
       <Drawer.Screen
         name="Crops"
         component={CropsScreen}
@@ -40,8 +68,6 @@ export default function TabLayout() {
           drawerIcon: ({ color }) => <IconSymbol size={24} name="seedling" color={color} />,
         }}
       />
-
-      {/* Drawer Screen for Farmer */}
       <Drawer.Screen
         name="Farmer"
         component={FarmerScreen}
@@ -50,8 +76,6 @@ export default function TabLayout() {
           drawerIcon: ({ color }) => <IconSymbol size={24} name="person.fill" color={color} />,
         }}
       />
-
-      {/* Drawer Screen for FarmType */}
       <Drawer.Screen
         name="FarmType"
         component={FarmTypeScreen}
@@ -60,8 +84,6 @@ export default function TabLayout() {
           drawerIcon: ({ color }) => <IconSymbol size={24} name="tree" color={color} />,
         }}
       />
-
-      {/* Drawer Screen for User */}
       <Drawer.Screen
         name="User"
         component={UserScreen}
@@ -70,67 +92,46 @@ export default function TabLayout() {
           drawerIcon: ({ color }) => <IconSymbol size={24} name="users" color={color} />,
         }}
       />
-
     </Drawer.Navigator>
   );
 }
 
+// Styles
 const styles = StyleSheet.create({
   drawerContainer: {
     flex: 1,
-    padding: 20,
-    borderTopRightRadius: 20,
-    borderBottomRightRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: -2, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
+    backgroundColor: '#2C3E50',
+    paddingTop: 20,
   },
-  heroSection: {
+  headerSection: {
     alignItems: 'center',
-    marginBottom: 25,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 15,
-    padding: 15,
-  },
-  logo: {
-    width: 110,
-    height: 110,
-    resizeMode: 'contain',
-  },
-  closeIcon: {
-    alignSelf: 'flex-end',
     marginBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#FFD700',
+    paddingBottom: 15,
   },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 10,
-    marginVertical: 5,
+  profileImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 10,
   },
-  menuText: {
-    marginLeft: 15,
+  profileName: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#FFD700',
   },
-  divider: {
-    marginVertical: 5,
-    backgroundColor: '#FFD700',
-    height: 1.5,
+  profileEmail: {
+    fontSize: 14,
+    color: '#EAEAEA',
   },
-  sectionDivider: {
-    marginVertical: 10,
-    backgroundColor: '#DAA520',
-    height: 2,
+  drawerStyle: {
+    backgroundColor: '#34495E',
+    width: 260,
   },
-  mainDivider: {
-    marginVertical: 20,
-    backgroundColor: '#8B4513',
-    height: 2,
+  drawerLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   logoutButton: {
     flexDirection: 'row',
@@ -140,14 +141,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: 'rgba(255,215,0,0.2)',
     marginTop: 20,
+    marginLeft: 15,
+    marginRight: 15,
   },
   logoutText: {
     marginLeft: 15,
     fontSize: 18,
     fontWeight: 'bold',
     color: '#FFD700',
-  },
-  menuButton: {
-    marginLeft: 15,
   },
 });
