@@ -1,99 +1,73 @@
-import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient'; // LinearGradient for custom background
-import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons'; // Import icons
+import { createStackNavigator } from '@react-navigation/stack'; // Add Stack Navigator
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabsScreen from '@/components/ui/TabsScreen';
+import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient from Expo (or react-native-linear-gradient)
+import { StyleSheet } from 'react-native';
 import CropsScreen from '../screens/Crop';
+import FarmTypeScreen from '../screens/FarmType'; // Import the FarmType screen
+import FarmerScreen from '../screens/Farmer'; // Import the Farmer screen
+import UserScreen from '../screens/User'; // Import the User screen
 
 // Create a Drawer Navigator
 const Drawer = createDrawerNavigator();
 
-const CustomDrawerContent = ({ navigation }) => {
-  return (
-    <View style={styles.drawerContainer}>
-      <LinearGradient
-        colors={['#74C369', '#2D732E']}
-        style={styles.gradientBackground}
-      >
-        {/* Logo Section */}
-        <View style={styles.heroSection}>
-          <Image source={require('@/assets/images/farm-logo.png')} style={styles.logo} />
-        </View>
-
-        {/* Drawer Items */}
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('home')}>
-          <MaterialCommunityIcons name="home" size={24} color="#FFD700" />
-          <Text style={styles.menuText}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Profile')}>
-          <Ionicons name="person-circle" size={24} color="#FFD700" />
-          <Text style={styles.menuText}>Profile</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Settings')}>
-          <MaterialCommunityIcons name="settings" size={24} color="#FFD700" />
-          <Text style={styles.menuText}>Settings</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Notifications')}>
-          <Ionicons name="notifications-outline" size={24} color="#FFD700" />
-          <Text style={styles.menuText}>Notifications</Text>
-        </TouchableOpacity>
-
-        {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton}>
-          <MaterialCommunityIcons name="logout" size={24} color="#FFD700" />
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
-      </LinearGradient>
-    </View>
-  );
-};
+// Create a Stack Navigator for Tab Navigation
+const Stack = createStackNavigator();
 
 export default function TabLayout() {
   return (
     <Drawer.Navigator
-    screenOptions={{
-      headerShown: true, // Show the header
-      headerStyle: {
-        backgroundColor: '#2D732E', // Green background for the header
-      },
-      drawerStyle: {
-        width: '70%', // Adjust drawer width if needed
-      },
-    }}
-    drawerContent={(props) => <CustomDrawerContent {...props} />}
-  >
+      screenOptions={{
+        headerShown: true, // Show the header
+      }}>
       {/* Drawer Screen for Tabs (Stack Navigator here) */}
       <Drawer.Screen
-        name="home"
-        component={TabsScreen}
+        name="Home"
+        component={TabsScreen} // This component will contain the Tabs navigation
         options={{
           title: 'Home',
+          drawerIcon: ({ color }) => <IconSymbol size={24} name="home" color={color} />,
         }}
       />
 
-      {/* Additional Drawer Menu Screens */}
+      {/* Drawer Screens for Additional Sections */}
       <Drawer.Screen
-        name="Profile"
-        component={CropsScreen}
+        name="Farmer"
+        component={FarmerScreen} // Replace with your actual Farmer screen
         options={{
-          title: 'Profile',
+          title: 'Farmer',
+          drawerIcon: ({ color }) => <IconSymbol size={24} name="user" color={color} />,
         }}
       />
+
       <Drawer.Screen
-        name="Settings"
-        component={CropsScreen}
+        name="Crops"
+        component={CropsScreen} // Replace with your actual Crops screen
         options={{
-          title: 'Settings',
+          title: 'Crops',
+          drawerIcon: ({ color }) => <IconSymbol size={24} name="seedling" color={color} />,
         }}
       />
+
       <Drawer.Screen
-        name="Notifications"
-        component={CropsScreen}
+        name="FarmType"
+        component={FarmTypeScreen} // Replace with your actual FarmType screen
         options={{
-          title: 'Notifications',
+          title: 'Farm Types',
+          drawerIcon: ({ color }) => <IconSymbol size={24} name="tree" color={color} />,
         }}
       />
+
+      <Drawer.Screen
+        name="User"
+        component={UserScreen} // Replace with your actual User screen
+        options={{
+          title: 'Users',
+          drawerIcon: ({ color }) => <IconSymbol size={24} name="users" color={color} />,
+        }}
+      />
+      
     </Drawer.Navigator>
   );
 }
@@ -101,33 +75,38 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   drawerContainer: {
     flex: 1,
-  },
-  gradientBackground: {
-    flex: 1,
-    paddingTop: 50, // Padding for the top of the drawer to avoid overlap with the logo
+    padding: 20,
     borderTopRightRadius: 20,
     borderBottomRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: -2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
   },
   heroSection: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 25,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 15,
     padding: 15,
-    justifyContent: 'center',
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 110,
+    height: 110,
     resizeMode: 'contain',
+  },
+  closeIcon: {
+    alignSelf: 'flex-end',
     marginBottom: 20,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 10,
     marginVertical: 5,
-    backgroundColor: 'rgba(255,255,255,0.1)',
   },
   menuText: {
     marginLeft: 15,
@@ -135,19 +114,37 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFD700',
   },
+  divider: {
+    marginVertical: 5,
+    backgroundColor: '#FFD700',
+    height: 1.5,
+  },
+  sectionDivider: {
+    marginVertical: 10,
+    backgroundColor: '#DAA520',
+    height: 2,
+  },
+  mainDivider: {
+    marginVertical: 20,
+    backgroundColor: '#8B4513',
+    height: 2,
+  },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
     borderRadius: 10,
-    marginTop: 20,
     backgroundColor: 'rgba(255,215,0,0.2)',
+    marginTop: 20,
   },
   logoutText: {
     marginLeft: 15,
     fontSize: 18,
     fontWeight: 'bold',
     color: '#FFD700',
+  },
+  menuButton: {
+    marginLeft: 15,
   },
 });
