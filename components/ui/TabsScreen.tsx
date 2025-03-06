@@ -15,15 +15,20 @@ const TabsScreen = () => {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: '#FFD700', // Active tab color (e.g., gold)
+        tabBarInactiveTintColor: '#ffffff', // Inactive tab color (e.g., white)
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
-            // Transparent background on iOS to show blur effect
+            backgroundColor: '#2D732E', // Green background on iOS
+            borderTopWidth: 0, // Optional: removes border
           },
-          default: {},
+          default: {
+            backgroundColor: '#2D732E', // Green background on other platforms
+            borderTopWidth: 0, // Optional: removes border
+          },
         }),
       }}>
       {/* Home Tab */}
