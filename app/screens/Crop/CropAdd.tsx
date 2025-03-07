@@ -44,18 +44,30 @@ const CropsAddScreen = () => {
         try {
             setLoading(true);
 
-            // Convert image URI to Blob
+            // Convert the image URI to Base64
             const response = await fetch(cropData.image);
             const blob = await response.blob();
+            const reader = new FileReader();
+
+            // Return a promise to wait for the Base64 encoding
+            const base64Promise = new Promise((resolve, reject) => {
+                reader.onloadend = () => {
+                    resolve(reader.result); // Base64 result
+                };
+                reader.onerror = (error) => reject(error);
+                reader.readAsDataURL(blob); // Convert to Base64
+            });
+
+            const base64Image = await base64Promise; // This will be in the format 'data:image/webp;base64,...'
 
             // Create FormData
             const formData = new FormData();
             formData.append('name', cropData.cropName);
             formData.append('description', cropData.description);
-            formData.append('image', blob, 'crop_image.jpg'); // Append the Blob directly
+            formData.append('image', base64Image); // Submit Base64 string instead of Blob
 
             // Submit data
-            const result = await postRequest('/crops/', formData, token, true);
+            const result = await postRequest('/crops/', formData, token);
 
             if (result) {
                 Toast.show({
@@ -85,6 +97,8 @@ const CropsAddScreen = () => {
             setLoading(false);
         }
     };
+
+
 
     return (
         <ScrollView contentContainerStyle={styles.container}>

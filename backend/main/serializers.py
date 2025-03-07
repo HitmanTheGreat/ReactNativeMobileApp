@@ -1,5 +1,12 @@
 from rest_framework import serializers
 from .models import CustomUser, Farmer, FarmType, Crop
+from rest_framework import serializers
+from .models import Crop
+from django.core.files.base import ContentFile
+import base64
+import imghdr
+from io import BytesIO
+from PIL import Image
 
 
 class UserGetSerializer(serializers.ModelSerializer):
@@ -36,12 +43,38 @@ class CropGetSerializer(serializers.ModelSerializer):
         model = Crop
         fields = '__all__'
 
-# POST Serializer for Crop (expects IDs for related objects)
+
 class CropPostSerializer(serializers.ModelSerializer):
+    image = serializers.CharField(write_only=True)
 
     class Meta:
         model = Crop
-        fields = '__all__'
+        fields = ['name', 'description', 'image']
+
+    def validate_image(self, value):
+        # Extract base64 data from 'data:image/webp;base64,...'
+        if not value.startswith('data:image'):
+            raise serializers.ValidationError("Invalid image format.")
+        
+        # Split base64 string into header and data
+        format, imgstr = value.split(';base64,')  # Split into format and base64 string
+        byte_data = base64.b64decode(imgstr)  # Decode base64 data
+
+        # Check image type
+        image_type = imghdr.what(None, byte_data)
+        if image_type not in ['jpeg', 'png', 'webp']:
+            raise serializers.ValidationError("Unsupported image type.")
+
+        # Create a file-like object from the byte data
+        image_file = ContentFile(byte_data, name="uploaded_image." + image_type)
+        return image_file
+
+    def create(self, validated_data):
+        image = validated_data.pop('image')  # Extract image data
+        crop = Crop.objects.create(**validated_data)
+        crop.image.save(image.name, image, save=True)  # Save the image
+        return crop
+
 
 # GET Serializer for Farmer
 class FarmerGetSerializer(serializers.ModelSerializer):
