@@ -4,12 +4,13 @@ import { useSelector } from 'react-redux'; // Import useSelector from react-redu
 import Toast from 'react-native-toast-message';
 import { postRequest } from '@/constants/api';
 import { ScrollView } from 'react-native-gesture-handler';
-import RNPickerSelect from 'react-native-picker-select'; // Import the picker
+import { Picker } from '@react-native-picker/picker'; // Updated import for Picker
 
 const UsersAddScreen = () => {
     const [userData, setUserData] = useState({
         username: '',
-        fullName: '',
+        firstName: '',  // Updated to first name
+        lastName: '',   // Added last name
         email: '',
         phone: '',
         password: '',
@@ -27,7 +28,7 @@ const UsersAddScreen = () => {
 
     const handleSubmit = async () => {
         // Check if any field is empty
-        if (!userData.username || !userData.fullName || !userData.email || !userData.password || !userData.confirmPassword) {
+        if (!userData.username || !userData.firstName || !userData.lastName || !userData.email || !userData.password || !userData.confirmPassword) {
             Toast.show({
                 type: 'error',
                 text1: 'Error!',
@@ -61,7 +62,8 @@ const UsersAddScreen = () => {
             setLoading(true);
             const dataToSubmit = {
                 username: userData.username,
-                fullName: userData.fullName,
+                firstName: userData.firstName, // Send the first name
+                lastName: userData.lastName,   // Send the last name
                 email: userData.email,
                 phone: userData.phone || '',
                 password: userData.password,
@@ -78,7 +80,8 @@ const UsersAddScreen = () => {
                 });
                 setUserData({
                     username: '',
-                    fullName: '',
+                    firstName: '',  // Reset first name
+                    lastName: '',   // Reset last name
                     email: '',
                     phone: '',
                     password: '',
@@ -120,13 +123,23 @@ const UsersAddScreen = () => {
                         />
                     </View>
 
-                    {/* Full Name Input */}
+                    {/* First Name Input */}
                     <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Full Name</Text>
+                        <Text style={styles.label}>First Name</Text>
                         <TextInput
                             style={styles.input}
-                            value={userData.fullName}
-                            onChangeText={(text) => handleChange('fullName', text)}
+                            value={userData.firstName}
+                            onChangeText={(text) => handleChange('firstName', text)}
+                        />
+                    </View>
+
+                    {/* Last Name Input */}
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.label}>Last Name</Text>
+                        <TextInput
+                            style={styles.input}
+                            value={userData.lastName}
+                            onChangeText={(text) => handleChange('lastName', text)}
                         />
                     </View>
 
@@ -177,15 +190,14 @@ const UsersAddScreen = () => {
                     {/* Role Dropdown */}
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Role</Text>
-                        <RNPickerSelect
-                            style={pickerSelectStyles}
-                            value={userData.role}
-                            onValueChange={(value) => handleChange('role', value)}
-                            items={[
-                                { label: 'Clerk', value: 'clerk' },
-                                { label: 'Admin', value: 'admin' },
-                            ]}
-                        />
+                        <Picker
+                            selectedValue={userData.role}
+                            onValueChange={(itemValue) => handleChange('role', itemValue)}
+                            style={styles.picker}
+                        >
+                            <Picker.Item label="Clerk" value="clerk" />
+                            <Picker.Item label="Admin" value="admin" />
+                        </Picker>
                     </View>
 
                     {/* Submit Button */}
@@ -199,39 +211,30 @@ const UsersAddScreen = () => {
                 {/* Toast Container */}
                 <Toast />
                 <View style={styles.spacer} />
-            </View >
+            </View>
         </ScrollView>
     );
 };
 
-const pickerSelectStyles = StyleSheet.create({
-    inputIOS: {
-        backgroundColor: '#F5F5F5',
-        padding: 10,
-        borderRadius: 8,
-        fontSize: 16,
-        color: '#333',
-    },
-    inputAndroid: {
-        backgroundColor: '#F5F5F5',
-        padding: 10,
-        borderRadius: 8,
-        fontSize: 16,
-        color: '#333',
-    },
-});
-
 const styles = StyleSheet.create({
+    // Existing styles
+    picker: {
+        height: 50,
+        backgroundColor: '#F5F5F5',
+        borderRadius: 8,
+        fontSize: 16,
+        color: '#333',
+    },
     container: {
-        flex: 1, // Full screen
-        justifyContent: 'center', // Center content vertically
-        alignItems: 'center', // Center content horizontally
-        backgroundColor: '#F0F4F8', // Keeps the background color
-        paddingHorizontal: 20, // Add some padding on the sides
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F0F4F8',
+        paddingHorizontal: 20,
     },
     scrollViewContent: {
-        flexGrow: 1, // Makes sure the content of the ScrollView stretches to fill the screen
-        justifyContent: 'center', // Centers content vertically in the ScrollView
+        flexGrow: 1,
+        justifyContent: 'center',
     },
     formContainer: {
         width: '100%',
