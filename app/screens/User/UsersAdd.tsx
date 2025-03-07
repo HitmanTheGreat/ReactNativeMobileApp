@@ -103,9 +103,8 @@ const UsersAddScreen = () => {
         }
     };
 
-
     return (
-        <ScrollView>
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
             <View style={styles.container}>
                 <View style={styles.spacer} />
                 <View style={styles.formContainer}>
@@ -224,13 +223,18 @@ const pickerSelectStyles = StyleSheet.create({
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, // Ensures the container takes up the full screen height
-        justifyContent: 'center', // Centers the content vertically
-        alignItems: 'center', // Centers the content horizontally
+        flex: 1, // Full screen
+        justifyContent: 'center', // Center content vertically
+        alignItems: 'center', // Center content horizontally
         backgroundColor: '#F0F4F8', // Keeps the background color
+        paddingHorizontal: 20, // Add some padding on the sides
+    },
+    scrollViewContent: {
+        flexGrow: 1, // Makes sure the content of the ScrollView stretches to fill the screen
+        justifyContent: 'center', // Centers content vertically in the ScrollView
     },
     formContainer: {
-        width: '80%',
+        width: '100%',
         padding: 20,
         backgroundColor: 'white',
         borderRadius: 10,
@@ -280,6 +284,5 @@ const styles = StyleSheet.create({
         height: 50,
     },
 });
-
 
 export default UsersAddScreen;

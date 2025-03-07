@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ActivityInd
 import { MaterialIcons } from '@expo/vector-icons';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { useNavigation } from '@react-navigation/native';
-import { getRequest, putRequest, deleteRequest } from '@/constants/api'; // Include the necessary API requests
+import { getRequest, putRequest, deleteRequest, patchRequest } from '@/constants/api'; // Include the necessary API requests
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import Toast from 'react-native-toast-message';
@@ -55,7 +55,14 @@ const FarmerDetailScreen = ({ route }) => {
 
     const handleSave = async () => {
         try {
-            await putRequest(`/farmers/${farmerId}/`, farmerData, token);  // Send PUT request to save data
+            // Ensure that farmerType.id is passed when submitting
+            const farmerDataToSubmit = {
+                ...farmerData,
+                farm_type: farmerData.farm_type.id, // Assuming 'farmerType' is an object with 'id' field
+            };
+
+            console.log(farmerDataToSubmit)
+            await patchRequest(`/farmers/${farmerId}/`, farmerDataToSubmit, token);  // Send PUT request to save data
             setIsEditing(false);  // Disable edit mode after saving
 
             // Show success toast message
@@ -75,7 +82,11 @@ const FarmerDetailScreen = ({ route }) => {
     };
 
     const handleChange = (key, value) => {
-        setFarmerData(prevData => ({ ...prevData, [key]: value }));
+        if (key === 'farmerType') {
+            setFarmerData(prevData => ({ ...prevData, [key]: { ...prevData[key], name: value } }));  // Update farmerType name
+        } else {
+            setFarmerData(prevData => ({ ...prevData, [key]: value }));
+        }
     };
 
     const pickerSelectStyles = {
@@ -127,7 +138,7 @@ const FarmerDetailScreen = ({ route }) => {
 
                 {/* Display Farmer Details */}
                 {Object.keys(farmerData)
-                    .filter(key => !['id', 'createdAt', 'updatedAt'].includes(key)) // Skip unnecessary fields
+                    .filter(key => !['id', 'createdAt', 'updatedAt' , 'farm_type'].includes(key)) // Skip unnecessary fields
                     .map((key, index) => (
                         <Animated.View key={key} entering={FadeInUp.delay(200 * index).duration(600)} style={styles.inputContainer}>
                             <Text style={styles.label}>{key.replace(/([A-Z])/g, " $1").toUpperCase()}</Text>
@@ -137,15 +148,15 @@ const FarmerDetailScreen = ({ route }) => {
                                 isEditing ? (
                                     <RNPickerSelect
                                         style={pickerSelectStyles}
-                                        value={farmerData[key]}
-                                        onValueChange={(value) => handleChange('farmerType', value)}
+                                        value={farmerData[key]?.name}  // Display the name of the farmerType
+                                        onValueChange={(value) => handleChange('farmerType', value)}  // Handle the name change
                                         items={[
                                             { label: 'Small Scale', value: 'small_scale' },
                                             { label: 'Commercial', value: 'commercial' },
                                         ]}
                                     />
                                 ) : (
-                                    <Text style={styles.text}>{farmerData[key]}</Text>
+                                    <Text style={styles.text}>{farmerData[key]?.name}</Text>  // Display the name in view mode
                                 )
                             ) : (
                                 isEditing ? (
@@ -155,11 +166,17 @@ const FarmerDetailScreen = ({ route }) => {
                                         onChangeText={(text) => handleChange(key, text)}
                                     />
                                 ) : (
-                                    <Text style={styles.text}>{farmerData[key]}</Text>
+                                    // Check if the value is an object before rendering it
+                                    typeof farmerData[key] === 'object' ? (
+                                        <Text style={styles.text}>{JSON.stringify(farmerData[key])}</Text>
+                                    ) : (
+                                        <Text style={styles.text}>{farmerData[key]}</Text>
+                                    )
                                 )
                             )}
                         </Animated.View>
                     ))}
+
             </Animated.View>
 
             {/* Delete Confirmation Modal */}
@@ -204,9 +221,9 @@ const styles = StyleSheet.create({
     modalText: { fontSize: 18, fontWeight: "bold", marginBottom: 15, textAlign: "center" },
     modalButtons: { flexDirection: "row", justifyContent: "space-between", width: "100%" },
     modalButton: { flex: 1, padding: 10, alignItems: "center", borderRadius: 8, marginHorizontal: 5 },
-    cancelButton: { backgroundColor: "#757575" },
+    cancelButton: { backgroundColor: "#BDBDBD" },
     confirmButton: { backgroundColor: "#D32F2F" },
-    modalButtonText: { color: "white", fontWeight: "bold", fontSize: 16 },
+    modalButtonText: { color: "#fff", fontWeight: "bold" },
 });
 
 export default FarmerDetailScreen;
