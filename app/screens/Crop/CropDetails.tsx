@@ -56,7 +56,7 @@ const CropDetailsScreen = ({ route }) => {
     const handleSave = async () => {
         try {
             // Attempt to send the updated data using a PUT request
-            await putRequest(`/crops/${cropId}/`, cropData, token);
+            await patchRequest(`/crops/${cropId}/`, cropData, token);
             setIsEditing(false); // Disable editing after saving
 
             // Show success toast
