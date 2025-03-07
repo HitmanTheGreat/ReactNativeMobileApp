@@ -130,7 +130,7 @@ const FarmersScreen = ({ navigation }) => {
             )}
 
             {/* Add Farmer Button */}
-            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('Farmer.FarmerAdd')}>
+            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('FarmerAdd')}>
                 <Icon name="user-plus" size={24} color="#fff" />
             </TouchableOpacity>
         </View>

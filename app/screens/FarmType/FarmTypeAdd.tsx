@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
 import { postRequest } from '@/constants/api';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootState } from '@/store/store';
 
 interface FarmTypeData {
@@ -75,50 +74,48 @@ const FarmTypeAdd: React.FC = () => {
     };
 
     return (
-        <ScrollView>
-            <View style={styles.container}>
-                <View style={styles.spacer} />
-                <View style={styles.formContainer}>
-                    <Text style={styles.title}>Add New Farm Type</Text>
+        <ScrollView contentContainerStyle={styles.container}>
+            <View style={styles.formContainer}>
+                <Text style={styles.title}>Add New Farm Type</Text>
 
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Farm Type Name</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={farmTypeData.name}
-                            onChangeText={(text) => handleChange('name', text)}
-                        />
-                    </View>
-
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Description</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={farmTypeData.description}
-                            onChangeText={(text) => handleChange('description', text)}
-                        />
-                    </View>
-
-                    <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
-                        <Text style={styles.buttonText}>{loading ? 'Submitting...' : 'Submit'}</Text>
-                    </TouchableOpacity>
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>Farm Type Name</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={farmTypeData.name}
+                        onChangeText={(text) => handleChange('name', text)}
+                    />
                 </View>
-                <Toast />
-                <View style={styles.spacer} />
+
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>Description</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={farmTypeData.description}
+                        onChangeText={(text) => handleChange('description', text)}
+                    />
+                </View>
+
+                <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
+                    <Text style={styles.buttonText}>{loading ? 'Submitting...' : 'Submit'}</Text>
+                </TouchableOpacity>
             </View>
+            <Toast />
         </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F0F4F8',
+        padding: 20, // Optional padding to prevent the content from sticking to the edges
     },
     formContainer: {
-        width: '80%',
+        width: '100%',
+        maxWidth: 600, // Limit the width for larger screens
         padding: 20,
         backgroundColor: 'white',
         borderRadius: 10,
@@ -163,9 +160,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: 'white',
         fontWeight: 'bold',
-    },
-    spacer: {
-        height: 50,
     },
 });
 

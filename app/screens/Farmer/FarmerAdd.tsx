@@ -9,10 +9,9 @@ const FarmerAddScreen = () => {
     const [farmerData, setFarmerData] = useState({
         name: '',
         nationalId: '',
-        location: null,
+        location: 'Harare', // Default to Harare
         farm_type: '',
         crop: '',
-        location: 'Harare', // Default to Harare
     });
     const [loading, setLoading] = useState(false);
     const [crops, setCrops] = useState([]);
@@ -120,9 +119,8 @@ const FarmerAddScreen = () => {
         }
     };
 
-
     return (
-        <ScrollView>
+        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <View style={styles.container}>
                 <View style={styles.spacer} />
                 <View style={styles.formContainer}>
@@ -199,10 +197,18 @@ const FarmerAddScreen = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 1, // Ensures it takes up the full screen
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F0F4F8',
+        paddingVertical: 20,
+        width: '100%', // Ensures it spans the entire width
+        height: '100%', // Ensures it spans the entire height
+    },
+    scrollViewContainer: {
+        flexGrow: 1, // Ensures ScrollView takes full height
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     formContainer: {
         width: '80%',

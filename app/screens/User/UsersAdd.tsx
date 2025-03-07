@@ -224,10 +224,10 @@ const pickerSelectStyles = StyleSheet.create({
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F0F4F8',
+        flex: 1, // Ensures the container takes up the full screen height
+        justifyContent: 'center', // Centers the content vertically
+        alignItems: 'center', // Centers the content horizontally
+        backgroundColor: '#F0F4F8', // Keeps the background color
     },
     formContainer: {
         width: '80%',
@@ -280,5 +280,6 @@ const styles = StyleSheet.create({
         height: 50,
     },
 });
+
 
 export default UsersAddScreen;

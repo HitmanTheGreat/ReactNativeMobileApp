@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
 import { postRequest } from '@/constants/api';
-import { ScrollView } from 'react-native-gesture-handler';
 import * as ImagePicker from 'expo-image-picker';
 
 const CropsAddScreen = () => {
@@ -41,23 +40,23 @@ const CropsAddScreen = () => {
             });
             return;
         }
-    
+
         try {
             setLoading(true);
-    
+
             // Convert image URI to Blob
             const response = await fetch(cropData.image);
             const blob = await response.blob();
-    
+
             // Create FormData
             const formData = new FormData();
             formData.append('name', cropData.cropName);
             formData.append('description', cropData.description);
             formData.append('image', blob, 'crop_image.jpg'); // Append the Blob directly
-    
+
             // Submit data
             const result = await postRequest('/crops/', formData, token, true);
-    
+
             if (result) {
                 Toast.show({
                     type: 'success',
@@ -86,63 +85,59 @@ const CropsAddScreen = () => {
             setLoading(false);
         }
     };
-    
-    
 
     return (
-        <ScrollView>
-            <View style={styles.container}>
-                <View style={styles.spacer} />
-                <View style={styles.formContainer}>
-                    <Text style={styles.title}>Add New Crop</Text>
+        <ScrollView contentContainerStyle={styles.container}>
+            <View style={styles.formContainer}>
+                <Text style={styles.title}>Add New Crop</Text>
 
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Crop Name</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={cropData.cropName}
-                            onChangeText={(text) => handleChange('cropName', text)}
-                        />
-                    </View>
-
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Description</Text>
-                        <TextInput
-                            style={[styles.input, styles.textarea]}
-                            value={cropData.description}
-                            onChangeText={(text) => handleChange('description', text)}
-                            multiline
-                            numberOfLines={4}
-                        />
-                    </View>
-
-                    <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
-                        <Text style={styles.imagePickerText}>Pick an Image</Text>
-                    </TouchableOpacity>
-                    {cropData.image && (
-                        <Image source={{ uri: cropData.image }} style={styles.image} />
-                    )}
-
-                    <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
-                        <Text style={styles.buttonText}>{loading ? 'Submitting...' : 'Submit'}</Text>
-                    </TouchableOpacity>
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>Crop Name</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={cropData.cropName}
+                        onChangeText={(text) => handleChange('cropName', text)}
+                    />
                 </View>
-                <Toast />
-                <View style={styles.spacer} />
+
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>Description</Text>
+                    <TextInput
+                        style={[styles.input, styles.textarea]}
+                        value={cropData.description}
+                        onChangeText={(text) => handleChange('description', text)}
+                        multiline
+                        numberOfLines={4}
+                    />
+                </View>
+
+                <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
+                    <Text style={styles.imagePickerText}>Pick an Image</Text>
+                </TouchableOpacity>
+                {cropData.image && (
+                    <Image source={{ uri: cropData.image }} style={styles.image} />
+                )}
+
+                <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
+                    <Text style={styles.buttonText}>{loading ? 'Submitting...' : 'Submit'}</Text>
+                </TouchableOpacity>
             </View>
+            <Toast />
         </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F0F4F8',
+        paddingHorizontal: 20, // Padding for better content spacing
     },
     formContainer: {
-        width: '80%',
+        width: '100%',
+        maxWidth: 500, // Maximum width for large screens
         padding: 20,
         backgroundColor: 'white',
         borderRadius: 10,
@@ -209,9 +204,6 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginTop: 10,
         borderRadius: 10,
-    },
-    spacer: {
-        height: 50,
     },
 });
 

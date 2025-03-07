@@ -124,12 +124,7 @@ class UserViewSet(viewsets.ModelViewSet):
             user.save()
 
     def perform_update(self, serializer):
-        # If the password is updated, hash it before saving
-        password = serializer.validated_data.get('password')
-        if password:
-            user = serializer.save()
-            user.set_password(password)  # Hash the password
-            user.save()
+        serializer.save()  # If password is not updated, just save the other fields
     
 
 
