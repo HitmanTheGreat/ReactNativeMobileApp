@@ -14,6 +14,12 @@ import { Text, View, StyleSheet } from 'react-native';
 import CustomDrawerContent from '@/components/CustomDrawerContent';
 import FarmerDetailScreen from '../screens/Farmer/FarmerDetails';
 import FarmerAddScreen from '../screens/Farmer/FarmerAdd';
+import UserDetailsScreen from '../screens/User/UserDetails';
+import UsersAddScreen from '../screens/User/UsersAdd';
+import FarmTypeDetails from '../screens/FarmType/FarmTypeDetails';
+import CropsAddScreen from '../screens/Crop/CropAdd';
+import CropDetailsScreen from '../screens/Crop/CropDetails';
+import FarmTypeAdd from '../screens/FarmType/FarmTypeAdd';
 
 const Drawer = createDrawerNavigator();
 
@@ -78,12 +84,7 @@ export default function TabLayout() {
         component={FarmerAddScreen}
         options={{
           title: 'Add Farmer',
-          drawerLabel: ({ color }) => (
-            <View style={styles.drawerItem}>
-              <CustomeIconSymbol size={20} name="person-add" color={color} />
-              <Text style={[styles.drawerText, { color }]}>Add Farmer</Text>
-            </View>
-          ),
+          drawerItemStyle: { display: "none" },
           drawerIcon: () => null,
         }}
       />
@@ -101,6 +102,7 @@ export default function TabLayout() {
       {/* Admin Screens */}
       {user?.role === 'admin' && (
         <>
+          {/* Crops */}
           <Drawer.Screen
             name="Crops"
             component={CropsScreen}
@@ -116,6 +118,26 @@ export default function TabLayout() {
             }}
           />
           <Drawer.Screen
+            name="CropAdd"
+            component={CropsAddScreen}
+            options={{
+              title: 'Add Crop',
+              drawerItemStyle: { display: "none" }, // Hide from drawer
+              drawerIcon: () => null,
+            }}
+          />
+          <Drawer.Screen
+            name="CropDetails"
+            component={CropDetailsScreen}
+            options={{
+              title: 'Crop Details',
+              drawerItemStyle: { display: "none" }, // Hide from drawer
+              drawerIcon: () => null,
+            }}
+          />
+
+          {/* Farm Type */}
+          <Drawer.Screen
             name="FarmType"
             component={FarmTypeScreen}
             options={{
@@ -130,6 +152,26 @@ export default function TabLayout() {
             }}
           />
           <Drawer.Screen
+            name="FarmTypeAdd"
+            component={FarmTypeAdd}
+            options={{
+              title: 'Add Farm Type',
+              drawerItemStyle: { display: "none" },
+              drawerIcon: () => null,
+            }}
+          />
+          <Drawer.Screen
+            name="FarmTypeDetails"
+            component={FarmTypeDetails}
+            options={{
+              title: 'Farm Type Details',
+              drawerItemStyle: { display: "none" },
+              drawerIcon: () => null,
+            }}
+          />
+
+          {/* Users */}
+          <Drawer.Screen
             name="User"
             component={UserScreen}
             options={{
@@ -140,6 +182,24 @@ export default function TabLayout() {
                   <Text style={[styles.drawerText, { color }]}>Users</Text>
                 </View>
               ),
+              drawerIcon: () => null,
+            }}
+          />
+          <Drawer.Screen
+            name="UserAdd"
+            component={UsersAddScreen}
+            options={{
+              title: 'Add User',
+              drawerItemStyle: { display: "none" },
+              drawerIcon: () => null,
+            }}
+          />
+          <Drawer.Screen
+            name="UserDetails"
+            component={UserDetailsScreen}
+            options={{
+              title: 'User Details',
+              drawerItemStyle: { display: "none" },
               drawerIcon: () => null,
             }}
           />
