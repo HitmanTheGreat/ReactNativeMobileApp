@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Toast from 'react-native-toast-message';
-import { postRequest } from '@/constants/api';
+import { createFarmType } from '@/store/thunks/farmTypeThunk';
 import { RootState } from '@/store/store';
 
 interface FarmTypeData {
@@ -15,9 +15,10 @@ const FarmTypeAdd: React.FC = () => {
         name: '',
         description: '',
     });
-    const [loading, setLoading] = useState<boolean>(false);
-    const token = useSelector((state: RootState) => state.user.access) as string | null;
-
+    const dispatch = useDispatch();
+    const status = useSelector((state: RootState) => state.farmType.status);
+    const error = useSelector((state: RootState) => state.farmType.error);
+    
     // Handle input changes
     const handleChange = (field: keyof FarmTypeData, value: string) => {
         setFarmTypeData((prevState) => ({ ...prevState, [field]: value }));
@@ -35,17 +36,10 @@ const FarmTypeAdd: React.FC = () => {
         }
 
         try {
-            setLoading(true);
+            // Dispatch the createFarmType action
+            await dispatch(createFarmType(farmTypeData));
 
-            // Create FormData
-            const formData = new FormData();
-            formData.append('name', farmTypeData.name);
-            formData.append('description', farmTypeData.description);
-
-            // Submit data
-            const result = await postRequest('/farm-types/', formData, token);
-
-            if (result) {
+            if (status === 'succeeded') {
                 Toast.show({
                     type: 'success',
                     text1: 'Success!',
@@ -55,11 +49,11 @@ const FarmTypeAdd: React.FC = () => {
                     name: '',
                     description: '',
                 });
-            } else {
+            } else if (status === 'failed' && error) {
                 Toast.show({
                     type: 'error',
                     text1: 'Error!',
-                    text2: result?.message || 'Failed to add Farm Type.',
+                    text2: error,
                 });
             }
         } catch (error: any) {
@@ -68,8 +62,6 @@ const FarmTypeAdd: React.FC = () => {
                 text1: 'Error!',
                 text2: error.message || 'An error occurred.',
             });
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -96,8 +88,8 @@ const FarmTypeAdd: React.FC = () => {
                     />
                 </View>
 
-                <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
-                    <Text style={styles.buttonText}>{loading ? 'Submitting...' : 'Submit'}</Text>
+                <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={status === 'loading'}>
+                    <Text style={styles.buttonText}>{status === 'loading' ? 'Submitting...' : 'Submit'}</Text>
                 </TouchableOpacity>
             </View>
             <Toast />

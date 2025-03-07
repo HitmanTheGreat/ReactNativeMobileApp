@@ -5,11 +5,10 @@ import { Swipeable } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Feather';
 import { RootState } from '@/store/store';
 import { fetchFarmTypes, createFarmType, updateFarmType, deleteFarmType, FarmType } from '@/store/thunks/farmTypeThunk';
-import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 
 interface FarmTypeScreenProps {
-    navigation: any; // Replace `any` with the proper type if you have defined a custom navigation type
+    navigation: any;
 }
 
 const FarmTypeScreen: React.FC<FarmTypeScreenProps> = ({ navigation }) => {
@@ -47,7 +46,9 @@ const FarmTypeScreen: React.FC<FarmTypeScreenProps> = ({ navigation }) => {
 
     const renderRightActions = (id: number) => (
         <View style={styles.actions}>
-            <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('EditFarmType', { farmTypeId: id })}>
+            <TouchableOpacity
+                style={styles.editButton}
+                onPress={() => navigation.navigate('EditFarmType', { farmTypeId: id })}>
                 <Icon name="edit" size={20} color="#fff" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(id)}>

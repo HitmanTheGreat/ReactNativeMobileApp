@@ -1,46 +1,76 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-// Define the structure of the crop state
-interface Crop {
-    id: number;
-    name: string;
-}
+import { createSlice } from "@reduxjs/toolkit";
+import { fetchCrops, createCrop, updateCrop, deleteCrop, Crop } from "@/store/thunks/cropThunk";
 
 interface CropState {
-    data: Crop[];     // List of crops
-    crop: Crop | null; // Selected crop (single crop)
-    isLoading: boolean;
+    data: Crop[];
+    status: "idle" | "loading" | "succeeded" | "failed";
     error: string | null;
 }
 
 const initialState: CropState = {
     data: [],
-    crop: null, // Initially no selected crop
-    isLoading: false,
+    status: "idle",
     error: null,
 };
 
 const cropSlice = createSlice({
-    name: 'crop',
+    name: "crop",
     initialState,
-    reducers: {
-        fetchCropsStart: (state) => {
-            state.isLoading = true;
-            state.error = null;
-        },
-        fetchCropsSuccess: (state, action: PayloadAction<Crop[]>) => {
-            state.isLoading = false;
-            state.data = action.payload;
-        },
-        fetchCropsFailure: (state, action: PayloadAction<string>) => {
-            state.isLoading = false;
-            state.error = action.payload;
-        },
-        setSelectedCrop: (state, action: PayloadAction<Crop | null>) => {
-            state.crop = action.payload; // Update the selected crop
-        },
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            // Fetch crops actions
+            .addCase(fetchCrops.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(fetchCrops.fulfilled, (state, action) => {
+                state.status = "succeeded";
+                state.data = action.payload;
+            })
+            .addCase(fetchCrops.rejected, (state, action) => {
+                state.status = "failed";
+                state.error = action.payload as string;
+            })
+            // Create crop actions
+            .addCase(createCrop.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(createCrop.fulfilled, (state, action) => {
+                state.status = "succeeded";
+                state.data.push(action.payload); // Add the newly created crop to the list
+            })
+            .addCase(createCrop.rejected, (state, action) => {
+                state.status = "failed";
+                state.error = action.payload as string;
+            })
+            // Update crop actions
+            .addCase(updateCrop.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(updateCrop.fulfilled, (state, action) => {
+                state.status = "succeeded";
+                const index = state.data.findIndex(crop => crop.id === action.payload.id);
+                if (index !== -1) {
+                    state.data[index] = action.payload; // Update the crop in the list
+                }
+            })
+            .addCase(updateCrop.rejected, (state, action) => {
+                state.status = "failed";
+                state.error = action.payload as string;
+            })
+            // Delete crop actions
+            .addCase(deleteCrop.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(deleteCrop.fulfilled, (state, action) => {
+                state.status = "succeeded";
+                state.data = state.data.filter(crop => crop.id !== action.payload); // Remove the deleted crop
+            })
+            .addCase(deleteCrop.rejected, (state, action) => {
+                state.status = "failed";
+                state.error = action.payload as string;
+            });
     },
 });
 
-export const { fetchCropsStart, fetchCropsSuccess, fetchCropsFailure, setSelectedCrop } = cropSlice.actions;
 export default cropSlice.reducer;

@@ -141,8 +141,8 @@ const ProfileScreen = () => {
                     )}
                 </Animated.View>
             </View>
-            <Toast ref={(ref) => Toast.setRef(ref)} />
-        </View>
+            <Toast />
+            </View>
     );
 };
 

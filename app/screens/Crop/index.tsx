@@ -5,53 +5,34 @@ import { FlatList, View, Text, TextInput, StyleSheet, Alert, TouchableOpacity, I
 import { Swipeable } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Feather';
 import { RootState } from '@/store/store';
-import { getRequest } from '@/constants/api';
 import { logout } from '@/store/slices/userSlice';
 import { useFocusEffect } from '@react-navigation/native';
+import { fetchCrops } from '@/store/thunks/cropThunk';
 
 const CropsScreen = ({ navigation }) => {
-
     // Get token from userSlice in Redux store
     const token = useSelector((state: RootState) => state.user?.access);
-    const router = useRouter();
+    const crops = useSelector((state: RootState) => state.crops.data);
+    const isLoading = useSelector((state: RootState) => state.crops.isLoading);
+    const error = useSelector((state: RootState) => state.crops.error);
     const dispatch = useDispatch();
     const [searchQuery, setSearchQuery] = useState('');
-    const [crops, setCrops] = useState<any[]>([]);
 
     useEffect(() => {
-        // Reset search query when component mounts
-        setSearchQuery('');
-
         // Fetch crops when token is available
         if (token) {
-            getRequest('/crops/', {}, token)
-                .then(response => {
-                    // Assuming response is an array of crops
-                    setCrops(response);
-                })
-                .catch(error => {
-                    console.error(error);
-                    Alert.alert('Error', 'Unable to fetch crops.');
-                });
+            dispatch(fetchCrops(token)); // Dispatch the thunk to fetch crops
         } else {
             dispatch(logout());
             router.push('/pages/login');
             Alert.alert('Error', 'No authentication token available.');
         }
-    }, []);
+    }, [token]);
 
     useFocusEffect(
         React.useCallback(() => {
             if (token) {
-                getRequest('/crops/', {}, token)
-                    .then(response => {
-                        // Assuming response is an array of crops
-                        setCrops(response);
-                    })
-                    .catch(error => {
-                        console.error(error);
-                        Alert.alert('Error', 'Unable to fetch crops.');
-                    });
+                dispatch(fetchCrops(token)); // Dispatch the thunk to fetch crops
             } else {
                 dispatch(logout());
                 router.push('/pages/login');
@@ -120,7 +101,11 @@ const CropsScreen = ({ navigation }) => {
             <View style={styles.spacer} />
 
             {/* Crop List */}
-            {filteredCrops.length === 0 ? (
+            {isLoading ? (
+                <Text>Loading...</Text>
+            ) : error ? (
+                <Text style={styles.errorText}>{error}</Text>
+            ) : filteredCrops.length === 0 ? (
                 <View style={styles.noItemsContainer}>
                     <Text style={styles.noItemsText}>No crops to show</Text>
                 </View>

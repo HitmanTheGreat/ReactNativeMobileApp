@@ -72,7 +72,7 @@ export default function LoginScreen() {
       dispatch(setUser(user));
 
       // Navigate to the menu screen
-      navigation.navigate('home');
+      navigation.navigate('Home');
 
     } catch (error : any) {
       console.error('Login failed', error);

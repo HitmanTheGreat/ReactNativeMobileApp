@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Picker } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
 import { ScrollView } from 'react-native-gesture-handler';

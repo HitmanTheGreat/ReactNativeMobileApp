@@ -26,10 +26,6 @@ const CustomDrawerContent = (props) => {
         try {
             dispatch(logout());
             router.push('/');
-            navigation.reset({
-                index: 0,
-                routes: [{ name: '/' }],
-            });
         } catch (error) {
             console.error("Logout Error:", error);
         }
@@ -43,7 +39,9 @@ const CustomDrawerContent = (props) => {
                     <View style={styles.headerSection}>
                         <Image source={require('@/assets/images/farm-logo.png')} style={styles.profileImage} />
                     </View>
-                    <Text style={styles.profileName}>Hello : {user.username.toUpperCase()} <HelloWave /></Text>
+                    <Text style={styles.profileName}>
+                        Hello : {user?.username?.toUpperCase() || 'Guest'} <HelloWave />
+                    </Text>
                 </View>
 
                 {/* Drawer Items */}
