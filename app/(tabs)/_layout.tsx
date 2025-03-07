@@ -93,12 +93,7 @@ export default function TabLayout() {
         component={FarmerDetailScreen}
         options={{
           title: 'Farmer Details',
-          drawerLabel: ({ color }) => (
-            <View style={styles.drawerItem}>
-              <CustomeIconSymbol size={20} name="info" color={color} />
-              <Text style={[styles.drawerText, { color }]}>Farmer Details</Text>
-            </View>
-          ),
+          drawerItemStyle: { display: "none" }, // Hides the screen from the drawer
           drawerIcon: () => null,
         }}
       />
