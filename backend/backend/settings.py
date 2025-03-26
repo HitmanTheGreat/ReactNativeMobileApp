@@ -53,6 +53,8 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",  # Frontend origin
     "http://localhost:3000",   # For local development with React
+    "http://localhost:8081",   # For local development with React
+    "http://localhost:8080",   # For local development with React
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
