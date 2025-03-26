@@ -57,6 +57,12 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://farm3.eport.dev",
+    "https://sandbox.farm3.eport.dev",
+]
+
+
 CORS_ALLOW_METHODS = [
     'GET',
     'POST',
