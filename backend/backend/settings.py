@@ -62,7 +62,10 @@ CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = [
     "https://farm3.eport.dev",
     "https://sandbox.farm3.eport.dev",
+    "http://127.0.0.1:3000",  
+    "http://localhost:3000", 
 ]
+
 
 
 CORS_ALLOW_METHODS = [
