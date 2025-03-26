@@ -51,10 +51,10 @@ MIDDLEWARE = [
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:3000",  # Frontend origin
-    "http://localhost:3000",   # For local development with React
-    "http://localhost:8081",   # For local development with React
-    "http://localhost:8080",   # For local development with React
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+    'http://localhost:8081'  
+    'http://localhost:8080'  
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -62,10 +62,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = [
     "https://farm3.eport.dev",
     "https://sandbox.farm3.eport.dev",
-    "http://127.0.0.1:3000",  
-    "http://localhost:3000", 
 ]
-
 
 
 CORS_ALLOW_METHODS = [
