@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosError } from "axios";
 
 // Default base URL for the Django API
-export const BASE_URL = "http://75.119.143.33:8100/api";
+export const BASE_URL = "https://farm3.eport.dev/api";
 
 // Define the types for the request data and token
 interface RequestData {
